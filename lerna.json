@@ -11,7 +11,6 @@
     "packages": [
         "packages/litexa",
         "packages/litexa-apl",
-        "packages/litexa-assets-wav",
         "packages/litexa-deploy-aws",
         "packages/litexa-gadgets",
         "packages/litexa-html",

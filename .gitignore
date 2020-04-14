@@ -20,7 +20,7 @@ litexa.pegjs.cached
 # nothing in this repo should be
 # a permanent deployment
 artifacts.json
-
+/tmp/
 
 # OSX #
 .DS_Store
@@ -31,3 +31,6 @@ artifacts.json
 
 # Editors
 .idea/
+
+# Project artifacts
+/packages/litexa-deploy-aws/dist/

@@ -103,7 +103,7 @@ npx lerna run test --scope [package-your-developing]
 for example, if you wanted to run test litexa and @litexa/deploy-aws you'd run
 
 ```bash
-npx lerna run test --scope litexa @litexa/deploy-aws
+npx lerna run test --scope @litexa/core @litexa/deploy-aws
 ```
 
 to run all the tests, omit the scoped flag

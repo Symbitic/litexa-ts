@@ -2,8 +2,9 @@
   "full-trace": true,
   "require": [
     "@litexa/core/aliasing",
-    "coffeescript/register"
+    "coffeescript/register",
+    "ts-node/register"
   ],
   "timeout": 1000,
-  "watch-extensions": ["coffee"]
+  "watch-extensions": [ "coffee", "ts" ]
 }
