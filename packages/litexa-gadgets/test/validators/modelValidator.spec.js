@@ -10,7 +10,7 @@ const { expect } = require('chai');
 const { modelValidatorForGadgets } = require('../../src/validators/modelValidator');
 
 require('coffeescript').register();
-const { JSONValidator } = require('@litexa/core/src/parser/jsonValidator.coffee').lib;
+const { JSONValidator } = require('@litexa/core/src/parser/jsonValidator').lib;
 
 describe('modelValidatorForGadgets', function() {
   const validator = new JSONValidator();

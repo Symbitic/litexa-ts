@@ -5,8 +5,8 @@ const rimraf = require('rimraf');
 const fs = require('fs');
 const path = require('path');
 
-const localization = require('@src/command-line/localization');
-const { Intent, FilteredIntent } = require('@src/parser/intent.coffee').lib
+const localization = require('../../../src/command-line/localization');
+const { Intent } = require('../../../src/parser/intent').lib
 
 const testSkillDirectory = 'localization-test-skill';
 
@@ -19,7 +19,7 @@ class RecordingLogger {
     this.warningLogs = [];
     this.writeLogs = [];
   }
-  
+
   error(err) {
     this.errors.push(err.message);
   }
@@ -40,7 +40,7 @@ class RecordingLogger {
     this.warningLogs.push(line);
   }
 
-  write({line}) {
+  write({ line }) {
     this.writeLogs.push(line);
   }
 }
@@ -53,7 +53,7 @@ function createOptionsObject() {
   }
 }
 
-describe('localization command', async () => {
+describe('localization command', () => {
   let options = undefined;
 
   doMemoryCleanup = () => {
@@ -74,8 +74,7 @@ describe('localization command', async () => {
     rimraf.sync(path.join(options.root, 'localization.json'));
   });
 
-
-  describe('localizing speech output', async () => {
+  describe('localizing speech output', () => {
     const litexaContent = [
       'launch',
       '  say "say line 1."',
@@ -94,6 +93,7 @@ describe('localization command', async () => {
       doMemoryCleanup();
     });
 
+    // This is the line that is always timing out.
     it('added a say line', async () => {
       const skillCode = [...litexaContent];
       skillCode.push('  say "say line 4."');
@@ -134,7 +134,7 @@ describe('localization command', async () => {
 
     it('deleted a say line, disabled removeOrphanedSpeech', async () => {
       const skillCode = [...litexaContent];
-      skillCode.splice(2,1);
+      skillCode.splice(2, 1);
       fs.writeFileSync(path.join(options.root, 'litexa', 'main.litexa'), skillCode.join('\n'));
       options = createOptionsObject();
 
@@ -146,7 +146,7 @@ describe('localization command', async () => {
 
     it('deleted a say line, enabled removeOrphanedSpeech', async () => {
       const skillCode = [...litexaContent];
-      skillCode.splice(3,1);
+      skillCode.splice(3, 1);
       fs.writeFileSync(path.join(options.root, 'litexa', 'main.litexa'), skillCode.join('\n'));
       options = createOptionsObject();
       options.removeOrphanedSpeech = true
@@ -158,7 +158,7 @@ describe('localization command', async () => {
     });
   });
 
-  describe('localizing utterances', async () => {
+  describe('localizing utterances', () => {
     const litexaContent = [
       'launch',
       '  say "say line 1."',
@@ -186,7 +186,7 @@ describe('localization command', async () => {
       options = createOptionsObject();
 
       await localization.localizeSkill(options);
-      expect(options.logger.verboseLogs[5]).to.equal('number of new utterances added since last localization: 2',);
+      expect(options.logger.verboseLogs[5]).to.equal('number of new utterances added since last localization: 2');
       expect('+ added yes utterance').to.equal(options.logger.writeLogs[0]);
       expect('+ added no utterance').to.equal(options.logger.writeLogs[1]);
     });
@@ -226,8 +226,8 @@ describe('localization command', async () => {
 
     it('deleted an utterance, disabled removeOrphanedUtterances', async () => {
       const skillCode = [...litexaContent];
-      skillCode.splice(4,1);
-      skillCode.splice(6,1);
+      skillCode.splice(4, 1);
+      skillCode.splice(6, 1);
       fs.writeFileSync(path.join(options.root, 'litexa', 'main.litexa'), skillCode.join('\n'));
       options = createOptionsObject();
 
@@ -239,8 +239,8 @@ describe('localization command', async () => {
     });
     it('deleted an utterance, enabled removeOrphanedUtterances', async () => {
       const skillCode = [...litexaContent];
-      skillCode.splice(4,1);
-      skillCode.splice(6,1);
+      skillCode.splice(4, 1);
+      skillCode.splice(6, 1);
       fs.writeFileSync(path.join(options.root, 'litexa', 'main.litexa'), skillCode.join('\n'));
       options = createOptionsObject();
       options.removeOrphanedUtterances = true;
@@ -253,7 +253,7 @@ describe('localization command', async () => {
     });
   });
 
-  describe('localizing intents', async () => {
+  describe('localizing intents', () => {
     const litexaContent = [
       'launch',
       '  say "say line 1."',
@@ -290,10 +290,10 @@ describe('localization command', async () => {
     it('changed an intent', async () => {
       const skillCode = [...litexaContent];
       skillCode[3] = '  when "modified yes intent"';
-      
+
       fs.writeFileSync(path.join(options.root, 'litexa', 'main.litexa'), skillCode.join('\n'));
       options = createOptionsObject();
-      
+
       await localization.localizeSkill(options);
       expect(options.logger.verboseLogs[1]).to.equal('number of new intents added since last localization: 1');
       expect(options.logger.verboseLogs[3]).to.equal('the following intents in localization.json are missing in skill:');
@@ -306,11 +306,11 @@ describe('localization command', async () => {
 
     it('deleted an intent', async () => {
       const skillCode = [...litexaContent];
-      skillCode.splice(6,3);
-      
+      skillCode.splice(6, 3);
+
       fs.writeFileSync(path.join(options.root, 'litexa', 'main.litexa'), skillCode.join('\n'));
       options = createOptionsObject();
-      
+
       await localization.localizeSkill(options);
       expect(options.logger.verboseLogs[1]).to.equal('number of new intents added since last localization: 0');
       expect(options.logger.verboseLogs[3]).to.equal('the following intents in localization.json are missing in skill:');
@@ -321,7 +321,7 @@ describe('localization command', async () => {
     });
   });
 
-  describe('cloning languages', async () => {
+  describe('cloning languages', () => {
     const litexaContent = [
       'launch',
       '  say "say line 1."',
@@ -341,11 +341,11 @@ describe('localization command', async () => {
       '    with $number = AMAZON.NUMBER',
       '    say "Got number intent with value $number."'
     ]
-    before(async () => {
+    before(() => {
       sinon.stub(process, 'exit');
     })
 
-    after(async () => {
+    after(() => {
       process.exit.restore();
     });
 
@@ -371,13 +371,13 @@ describe('localization command', async () => {
 
       const intents = Object.keys(localizationJson.intents);
       intents.forEach((intent) => {
-        expect(Object.keys(localizationJson.intents[intent])).to.deep.equal(['default','en','en-US']);
+        expect(Object.keys(localizationJson.intents[intent])).to.deep.equal(['default', 'en', 'en-US']);
         expect(localizationJson.intents[intent]['en-US']).to.deep.equal(localizationJson.intents[intent]['en']);
         // no test to compare to default because default does not get sorted
       });
       const sayStrings = Object.keys(localizationJson.speech);
       sayStrings.forEach((sayString) => {
-        expect(Object.keys(localizationJson.speech[sayString])).to.deep.equal(['en','en-US']);
+        expect(Object.keys(localizationJson.speech[sayString])).to.deep.equal(['en', 'en-US']);
         expect(sayString).to.deep.equal(localizationJson.speech[sayString]['en']);
         expect(sayString).to.deep.equal(localizationJson.speech[sayString]['en-US']);
       });

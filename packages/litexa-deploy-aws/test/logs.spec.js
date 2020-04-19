@@ -1,8 +1,8 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
 import chai from 'chai';
@@ -16,7 +16,7 @@ import mkdirp from 'mkdirp';
 import Logs from '../src/logs';
 
 chai.use(chaiAsPromised);
-const {assert, expect} = chai;
+const { assert, expect } = chai;
 
 const fakeLogStreams = {
   logStreams: [
@@ -60,8 +60,7 @@ const fakeLogEvents_streamA = {
   ]
 };
 
-
-describe('Pull logs from CloudWatch', function() {
+describe('Pull logs from CloudWatch', () => {
   let cloudwatchInterface = undefined;
   let loggerInterface = undefined;
   let logSpy = undefined;
@@ -72,7 +71,7 @@ describe('Pull logs from CloudWatch', function() {
   let getLogEventsStub = undefined;
   let context = undefined;
 
-  beforeEach(function() {
+  beforeEach(() => {
     loggerInterface = {
       log() { return undefined; },
       error() { return undefined; }
@@ -107,7 +106,7 @@ describe('Pull logs from CloudWatch', function() {
     return errorSpy = spy(loggerInterface, 'error');
   });
 
-  afterEach(function() {
+  afterEach(() => {
     logSpy.restore();
     errorSpy.restore();
     rimraf.sync('.logs');
@@ -115,7 +114,7 @@ describe('Pull logs from CloudWatch', function() {
     return fs.unlinkSync('aws-config.json');
   });
 
-  it('pulls logs and formats them to a file correctly', async function() {
+  it('pulls logs and formats them to a file correctly', async () => {
     getLogEventsSpy = spy(cloudwatchInterface, 'getLogEvents');
     describeLogStreamsSpy = spy(cloudwatchInterface, 'describeLogStreams');
 
@@ -139,18 +138,20 @@ describe('Pull logs from CloudWatch', function() {
     expect(logContents).to.not.include("START");
 
     getLogEventsSpy.restore();
-    return describeLogStreamsSpy.restore();
+    describeLogStreamsSpy.restore();
   });
 
-  it('has no log group to pull from', async function() {
+  it('has no log group to pull from', async () => {
     getLogEventsSpy = spy(cloudwatchInterface, 'getLogEvents');
 
     describeLogStreamsStub = stub(cloudwatchInterface, 'describeLogStreams').callsFake(() => ({
-      promise() { return new Promise(function() {
-        const error = new Error();
-        error.code = "ResourceNotFoundException";
-        throw error;
-      }); }
+      promise() {
+        return new Promise(() => {
+          const error = new Error();
+          error.code = "ResourceNotFoundException";
+          throw error;
+        });
+      }
     }));
 
     await Logs.pull(context, loggerInterface);
@@ -167,19 +168,19 @@ describe('Pull logs from CloudWatch', function() {
     return getLogEventsSpy.restore();
   });
 
-  describe('path where describeLogStreams throws an error', function() {
+  describe('path where describeLogStreams throws an error', function () {
     beforeEach(() => describeLogStreamsStub = stub(cloudwatchInterface, 'describeLogStreams').callsFake(() => ({
-      promise() { return new Promise(function() { throw new Error("Random error"); }); }
+      promise() { return new Promise(function () { throw new Error("Random error"); }); }
     })));
 
     afterEach(() => describeLogStreamsStub.restore());
 
-    it('throws an error to stop log pull', function() {
+    it('throws an error to stop log pull', function () {
       const awaitPull = async () => await Logs.pull(context, loggerInterface);
       return assert.isRejected(awaitPull(), "failed to pull logs", 'log pull threw error');
     });
 
-    return it('verifies the path', async function() {
+    return it('verifies the path', async function () {
       getLogEventsSpy = spy(cloudwatchInterface, 'getLogEvents');
 
       try {
@@ -190,30 +191,34 @@ describe('Pull logs from CloudWatch', function() {
 
       assert(describeLogStreamsStub.calledOnce, 'describeLogStreams was called once');
       assert(getLogEventsSpy.notCalled, 'getLogEvents was not called');
-      assert(errorSpy.calledOnceWith(match({message: "Random error"})), 'logger.error logs describeLogStreams\'s thrown error');
+      assert(errorSpy.calledOnceWith(match({ message: "Random error" })), 'logger.error logs describeLogStreams\'s thrown error');
 
       return getLogEventsSpy.restore();
     });
   });
 
-  return describe('path where getLogEvents throws an error', function() {
-    beforeEach(function() {
+  return describe('path where getLogEvents throws an error', () => {
+    beforeEach(() => {
       describeLogStreamsSpy = spy(cloudwatchInterface, 'describeLogStreams');
       return getLogEventsStub = stub(cloudwatchInterface, 'getLogEvents').callsFake(() => ({
-        promise() { return new Promise(function() { throw new Error("Random error"); }); }
+        promise() {
+          return new Promise(() => {
+            throw new Error("Random error");
+          });
+        }
       }));
     });
-    afterEach(function() {
+    afterEach(() => {
       describeLogStreamsSpy.restore();
       return getLogEventsStub.restore();
     });
 
-    it('throws an error to stop log pull', function() {
+    it('throws an error to stop log pull', () => {
       const awaitPull = async () => await Logs.pull(context, loggerInterface);
       return assert.isRejected(awaitPull(), "failed to pull logs", 'log pull threw error');
     });
 
-    return it('verifies the path', async function() {
+    return it('verifies the path', async () => {
       try {
         await Logs.pull(context, loggerInterface);
       } catch (error) {
@@ -222,7 +227,7 @@ describe('Pull logs from CloudWatch', function() {
 
       assert(describeLogStreamsSpy.calledOnce, 'describeLogStreams was called once');
       assert(getLogEventsStub.calledOnce, 'getLogEvents was called once');
-      return assert(errorSpy.calledOnceWith(match({message: "Random error"})), 'logger.error logs getLogEvents\'s thrown error');
+      return assert(errorSpy.calledOnceWith(match({ message: "Random error" })), 'logger.error logs getLogEvents\'s thrown error');
     });
   });
 });

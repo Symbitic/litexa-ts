@@ -458,8 +458,7 @@ class lib.Skill
 
     #output.push "exports.dataTables = {};"
 
-    source = fs.readFileSync(__dirname + '/handler.coffee', 'utf8')
-    source = coffee.compile(source, {bare: true})
+    source = fs.readFileSync(__dirname + '/handler.js', 'utf8')
     output.push source
 
     for language of @languages

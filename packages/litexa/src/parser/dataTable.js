@@ -52,5 +52,6 @@ const lib = {
 };
 
 module.exports = {
-  lib
+  lib,
+  ...lib
 };

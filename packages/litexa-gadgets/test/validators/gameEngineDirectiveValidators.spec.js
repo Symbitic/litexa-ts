@@ -13,7 +13,7 @@ const {
 } = require('../../src/validators/gameEngineDirectiveValidators');
 
 require('coffeescript').register();
-const { JSONValidator } = require('@litexa/core/src/parser/jsonValidator.coffee').lib;
+const { JSONValidator } = require('@litexa/core/src/parser/jsonValidator').lib;
 
 describe('gameEngineDirectiveValidators', function() {
   const validator = new JSONValidator();
