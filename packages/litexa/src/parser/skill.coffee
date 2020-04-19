@@ -9,18 +9,24 @@ fs = require 'fs'
 path = require 'path'
 mkdirp = require 'mkdirp'
 coffee = require 'coffeescript'
-testing = require './testing.coffee'
-{ ParserError, formatLocationStart } = require("./errors.coffee").lib
+testing = require './testing'
+{ ParserError, formatLocationStart } = require("./errors").lib
+sayCounter = require('./sayCounter')
+MockDB = require('./mockdb')
+Entitlements = require './mockEntitlements'
+Files = require './files'
+litexaParser = require './parser'
+{ _initPaths } = require('module').Module
 
 exp = module.exports
-lib = exp.lib = require './parserlib.coffee'
+lib = exp.lib = require './parserlib'
 
 makeReferenceTester = (litexaRoot, source) ->
   try
     # build a closure that can check for the existence of a symbol
     # within the main body of the inline code closure
     process.env.NODE_PATH = path.join litexaRoot, 'node_modules'
-    require("module").Module._initPaths()
+    _initPaths()
     func = eval """
       (function() {
         #{source}
@@ -39,9 +45,6 @@ makeReferenceTester = (litexaRoot, source) ->
   return func
 
 
-Files = require './files.coffee'
-
-
 class lib.Skill
   constructor: (@projectInfo) ->
     unless @projectInfo
@@ -56,7 +59,6 @@ class lib.Skill
     if window?.literateAlexaParser
       @parser = window.literateAlexaParser
     else
-      litexaParser = require './parser.coffee'
       @parser = eval litexaParser.buildExtendedParser @projectInfo
 
     # cache these to customize the handler
@@ -328,7 +330,7 @@ class lib.Skill
   toLambda: (options) ->
     @refreshAllFiles()
 
-    require('./sayCounter').reset()
+    sayCounter.reset()
 
     options = options ? {}
     @libraryCode = [
@@ -378,7 +380,6 @@ class lib.Skill
     @libraryCode.push @extensionRuntimeCode()
 
     @libraryCode.push "litexa.extendedEventNames = #{JSON.stringify @extendedEventNames};"
-
 
     @libraryCode = @libraryCode.join("\n")
 
@@ -764,9 +765,8 @@ class lib.Skill
     languageModel = @toModelV2 testRegion
 
     # mock some things external to the handler
-    db = new (require('./mockdb.coffee'))()
+    db = new MockDB()
     testContext.db = db
-    Entitlements = require './mockEntitlements.coffee'
 
     # for better error reporting, while testing prefer to have tracing on
     unless process.env.enableStateTracing?
@@ -801,7 +801,7 @@ class lib.Skill
 
     try
       process.env.NODE_PATH = path.join testContext.litexaRoot, 'node_modules'
-      require("module").Module._initPaths()
+      _initPaths()
 
       if @projectInfo?.testRoot?
         fs.writeFileSync (path.join @projectInfo.testRoot, 'test.js'), @lambdaSource, 'utf8'

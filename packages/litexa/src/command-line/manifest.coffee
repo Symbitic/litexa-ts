@@ -24,7 +24,7 @@ module.exports.create = (name, language) ->
   if language == 'typescript'
     language = "#{language}/config"
 
-  source = path.join(__dirname, 'templates', 'common', language, "skill.#{extension}")
+  source = path.join(__dirname, '..', '..', 'templates', 'common', language, "skill.#{extension}")
 
   data = fs.readFileSync source, 'utf8'
   searchReplace(data, {name, invocation})

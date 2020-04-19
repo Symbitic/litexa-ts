@@ -5,7 +5,7 @@
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ###
 
-DBInterface = require('./dbInterface.coffee')
+DBInterface = require('./dbInterface')
 
 
 module.exports = class MockDB

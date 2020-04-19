@@ -7,9 +7,10 @@
 
 lib = module.exports.lib = {}
 
-{ Function } = require('./function.coffee').lib
-{ Intent, FilteredIntent } = require('./intent.coffee').lib
-{ ParserError } = require("./errors.coffee").lib
+{ Function } = require('./function').lib
+{ Intent, FilteredIntent } = require('./intent').lib
+{ ParserError } = require("./errors").lib
+{ VariableScopeManager } = require('./variableScope')
 
 class lib.Transition
   constructor: (@name, @stop) ->
@@ -183,7 +184,7 @@ class lib.State
   toLambda: (output, options) ->
     workingIntents = @collectIntentsForLanguage(options.language)
 
-    options.scopeManager = new (require('./variableScope').VariableScopeManager)(@locations[options.language], @name)
+    options.scopeManager = new VariableScopeManager(@locations[options.language], @name)
     options.scopeManager.currentScope.referenceTester = options.referenceTester
 
     enterFunc = []
@@ -315,7 +316,7 @@ class lib.State
       catch err
         if err.location
           throw err # ParserErrors have location properties; propagate the error
-        else 
+        else
           throw new Error "failed to write language model for state `#{@name}`: #{err}"
 
       continue unless model?

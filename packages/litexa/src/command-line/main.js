@@ -9,4 +9,4 @@
 
 require('../../aliasing');
 var coffee = require('coffeescript').register();
-require('./router.coffee').run();
+require('./router').run();

@@ -7,10 +7,9 @@
 
 lib = module.exports.lib = {}
 
-{ Function, FunctionMap } = require("./function.coffee").lib
-{ ParserError, formatLocationStart } = require("./errors.coffee").lib
+{ Function, FunctionMap } = require("./function").lib
+{ ParserError, formatLocationStart } = require("./errors").lib
 Utils = require('@src/parser/utils').lib
-
 
 builtInIntents = [
   "AMAZON.CancelIntent"

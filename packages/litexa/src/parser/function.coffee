@@ -6,7 +6,7 @@
 ###
 
 lib = module.exports.lib = {}
-{ ParserError } = require("./errors.coffee").lib
+{ ParserError } = require("./errors").lib
 
 
 operatorMap =

@@ -269,8 +269,7 @@ grindSays = (language, allSays, line) ->
     return ctx unless found
   return ctx
 
-
-class lib.ExpectedExactSay
+class ExpectedExactSay
   # verbatim text match, rather than say string search
   constructor: (@location, @line) ->
 
@@ -285,7 +284,7 @@ class lib.ExpectedExactSay
     unless @line == test
       throw new ParserError @location, "speech did not exactly match `#{@line}`"
 
-class lib.ExpectedRegexSay
+class ExpectedRegexSay
   # given a regex, rather than constructing one
   constructor: (@location, @regex) ->
 
@@ -299,7 +298,7 @@ class lib.ExpectedRegexSay
     unless test.match(regexp) or abbreviatedTest.match(regexp)
       throw new ParserError @location, "speech did not match regex `/#{@regex.expression}/#{@regex.flags}`"
 
-class lib.ExpectedSay
+class ExpectedSay
   # expect all say statements that concatenate into @line
   constructor: (@location, @line) ->
 
@@ -330,7 +329,7 @@ class lib.ExpectedSay
       throw new ParserError @location, "unexpected extra speech, `#{remainder}`"
 
 
-class lib.ExpectedState
+class ExpectedState
   # expect the state in the response to be @name
   constructor: (@location, @name) ->
 
@@ -359,7 +358,7 @@ comparatorNames = {
   "<": "less than"
 }
 
-class lib.ExpectedDB
+class ExpectedDB
   # expect the value in the db to be this
   constructor: (@location, @reference, @op, @tail) ->
 
@@ -375,7 +374,7 @@ class lib.ExpectedDB
         #{comparatorNames[@op]} `#{tail}`"
 
 
-class lib.ExpectedEndSession
+class ExpectedEndSession
   # expect the response to indicate the session should end
   constructor: (@location) ->
 
@@ -385,7 +384,7 @@ class lib.ExpectedEndSession
     unless result.data.response.shouldEndSession
       throw new ParserError @location, "session did not indicate it should end as expected"
 
-class lib.ExpectedContinueSession
+class ExpectedContinueSession
   constructor: (@location, @kinds) ->
 
   isExpectedContinueSession: true
@@ -398,7 +397,7 @@ class lib.ExpectedContinueSession
       if result.data.response.shouldEndSession?
         throw new ParserError @location, "skill is not listening for events, without microphone"
 
-class lib.ExpectedDirective
+class ExpectedDirective
   # expect the response to indicate the session should end
   constructor: (@location, @name) ->
 
@@ -417,7 +416,7 @@ class lib.ExpectedDirective
       throw new ParserError @location, "response did not contain expected directive #{@name}, instead had [#{types}]"
 
 
-class lib.ResponseGeneratingStep
+class ResponseGeneratingStep
   constructor: ->
     @expectations = []
 
@@ -438,7 +437,7 @@ class lib.ResponseGeneratingStep
       throw new Error "TestError: step expects the session to end and not to end"
     unless should?
       unless shouldnot?
-        @expectations.push new lib.ExpectedContinueSession @location
+        @expectations.push new ExpectedContinueSession @location
 
   makeResult: ->
     {
@@ -511,7 +510,7 @@ class lib.ResponseGeneratingStep
         result.errors.push e for e in trap.errors
       resultCallback ex, result
 
-class RequestStep extends lib.ResponseGeneratingStep
+class RequestStep extends ResponseGeneratingStep
   constructor: (@location, @name, @source) ->
     super()
 
@@ -526,7 +525,7 @@ class RequestStep extends lib.ResponseGeneratingStep
     result.event = event
     @processEvent { result, skill, lambda, context, resultCallback }
 
-class LaunchStep extends lib.ResponseGeneratingStep
+class LaunchStep extends ResponseGeneratingStep
   constructor: (@location, @say, @intent) ->
     super()
 
@@ -540,7 +539,7 @@ class LaunchStep extends lib.ResponseGeneratingStep
     result.event = event
     @processEvent { result, skill, lambda, context, resultCallback }
 
-class VoiceStep extends lib.ResponseGeneratingStep
+class VoiceStep extends ResponseGeneratingStep
   constructor: (@location, @say, @intent, values) ->
     super()
     @values = {}
@@ -805,7 +804,7 @@ class TestLibrary
       @report "#{title} OK"
 
 
-class lib.CodeTest
+class CodeTest
   constructor: (@file) ->
 
   test: (testContext, output, resultCallback) ->
@@ -886,7 +885,7 @@ class lib.CodeTest
     @messages.push ''
 
 
-class lib.TestContext
+class TestContext
   constructor: (@skill, @options) ->
     @output =
       log: []
@@ -897,7 +896,7 @@ class lib.TestContext
     @allSays = collectSays @skill, @lambda
 
 
-class lib.Test
+class Test
   constructor: (@location, @name, @sourceFilename) ->
     @steps = []
     @capturesNames = []
@@ -1186,7 +1185,6 @@ class lib.Test
 
         nextStep()
       }
-
     nextStep()
 
 lib.TestUtils = {
@@ -1195,6 +1193,19 @@ lib.TestUtils = {
   makeRequestId
   padStringWithChars
 }
+
+lib.ExpectedExactSay = ExpectedExactSay
+lib.ExpectedRegexSay = ExpectedRegexSay
+lib.ExpectedSay = ExpectedSay
+lib.ExpectedState = ExpectedState
+lib.ExpectedDB = ExpectedDB
+lib.ExpectedEndSession = ExpectedEndSession
+lib.ExpectedContinueSession = ExpectedContinueSession
+lib.ExpectedDirective = ExpectedDirective
+lib.ResponseGeneratingStep = ResponseGeneratingStep
+lib.CodeTest = CodeTest
+lib.TestContext = TestContext
+lib.Test = Test
 
 module.exports = {
   lib

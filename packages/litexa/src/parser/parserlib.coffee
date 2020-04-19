@@ -17,19 +17,19 @@ resetLib = ->
     for name, part of required.lib
       lib[name] = part
 
-  mergeLib require("./errors.coffee")
-  mergeLib require("./jsonValidator.coffee")
-  mergeLib require("./dataTable.coffee")
-  mergeLib require("./testing.coffee")
-  mergeLib require("./variableReference.coffee")
-  mergeLib require("./say.coffee")
-  mergeLib require("./card.coffee")
-  mergeLib require("./function.coffee")
-  mergeLib require("./assets.coffee")
-  mergeLib require("./soundEffect.coffee")
-  mergeLib require("./intent.coffee")
-  mergeLib require("./state.coffee")
-  mergeLib require("./monetization.coffee")
+  mergeLib require("./errors")
+  mergeLib require("./jsonValidator")
+  mergeLib require("./dataTable")
+  mergeLib require("./testing")
+  mergeLib require("./variableReference")
+  mergeLib require("./say")
+  mergeLib require("./card")
+  mergeLib require("./function")
+  mergeLib require("./assets")
+  mergeLib require("./soundEffect")
+  mergeLib require("./intent")
+  mergeLib require("./state")
+  mergeLib require("./monetization")
 
   # reset the static index of all utterances
   lib.Intent.unregisterUtterances()

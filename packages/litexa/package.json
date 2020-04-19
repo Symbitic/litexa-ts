@@ -3,11 +3,15 @@
   "version": "0.5.0",
   "description": "Litexa, a programming language for writing Alexa skills",
   "bin": {
-    "litexa": "src/command-line/main.js"
+    "litexa": "dist/command-line/main.js"
   },
   "scripts": {
     "audit:fix": "npm audit fix",
-    "build": "npm run clean && npm install",
+    "build:compile": "tsc",
+    "build:coffee": "cpy --no-overwrite '**/*.{coffee,pegjs}' '../dist/' --cwd=src --parents",
+    "build:templates": "cpy --no-overwrite 'command-line/templates' '../dist/' --cwd=src --parents",
+    "build1": "npm-run-all -s build:compile build:coffee build:templates",
+    "build": "echo TODO",
     "clean": "npx rimraf node_modules",
     "coverage": "npx nyc npm test && node ../../cacheCoverage.js",
     "rdoc": "npx coffee ./src/documentation/html/render.coffee",

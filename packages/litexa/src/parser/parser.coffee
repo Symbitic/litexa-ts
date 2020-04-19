@@ -134,7 +134,7 @@ module.exports.parseFragment = (fragment, language) ->
 
   fragmentParser.parse fragment,
     skill: skill
-    lib: require './parserlib.coffee'
+    lib: require './parserlib'
     language: language ? 'default'
 
   return result

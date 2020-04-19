@@ -19,6 +19,7 @@ class SkillManifestGenerator extends Generator
   constructor: (args) ->
     super(args)
     @inquirer = args.inputHandler
+    @storeTitleName = @options.storeTitleName
 
   # public interface
   generate: ->
@@ -42,8 +43,12 @@ class SkillManifestGenerator extends Generator
     }
     options.default = @defaultProjectName if @defaultProjectName?
 
-    result = await @inquirer.prompt(options)
-    name = result.storeTitleName
+    if @storeTitleName? and skillStoreTitleValidate(@storeTitleName)
+      @logger.log "Using skill title \"#{@storeTitleName}\""
+      name = @storeTitleName
+    else
+      result = await @inquirer.prompt(options)
+      name = result.storeTitleName
 
     skillManifest = manifest.create name, @_configLanguage()
     fs.writeFileSync filePath, skillManifest, 'utf8'

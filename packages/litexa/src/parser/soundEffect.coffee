@@ -7,8 +7,9 @@
 
 lib = module.exports.lib = {}
 
-{ ParserError } = require('./errors.coffee').lib
+{ ParserError } = require('./errors').lib
 
+sayCounter = require('./sayCounter')
 
 literalRegex = (line) ->
   line = line.replace /\./g, '\\.'
@@ -32,7 +33,7 @@ class lib.SoundEffect
 
   toLambda: (output, indent, options) ->
     if @alternates.length > 1
-      sayKey = require('./sayCounter').get()
+      sayKey = sayCounter.get()
       output.push "#{indent}switch(pickSayString(context, #{sayKey}, #{@alternates.length})) {"
       for alt, idx in @alternates
         if idx == @alternates.length - 1

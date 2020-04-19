@@ -7,9 +7,9 @@
 
 lib = module.exports.lib = {}
 
-{ parseFragment } = require('./parser.coffee')
-{ ParserError } = require('./errors.coffee').lib
-{ AssetName } = require('./assets.coffee').lib
+{ parseFragment } = require('./parser')
+{ ParserError } = require('./errors').lib
+{ AssetName } = require('./assets').lib
 {
   replaceNewlineCharacters,
   isEmptyContentString,
@@ -17,7 +17,8 @@ lib = module.exports.lib = {}
   dedupeNonNewlineConsecutiveWhitespaces,
   cleanTrailingSpaces,
   cleanLeadingSpaces
-} = require('./utils.coffee').lib
+} = require('./utils').lib
+sayCounter = require('./sayCounter')
 
 class lib.StringPart
   constructor: (text) ->
@@ -424,7 +425,7 @@ class lib.Say
 
     writeAlternates = (indent, alternates) ->
       if alternates.length > 1
-        sayKey = require('./sayCounter').get()
+        sayKey = sayCounter.get()
         output.push "#{indent}switch(pickSayString(context, #{sayKey}, #{alternates.length})) {"
         for alt, idx in alternates
           if idx == alternates.length - 1

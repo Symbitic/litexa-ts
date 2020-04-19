@@ -14,6 +14,7 @@ rimraf = require 'rimraf'
 require('@litexa/core/aliasing') # Load Aliases that Litexa uses in require statements
 Skill = require('@litexa/core/src/parser/skill')
 ProjectInfo = require('@litexa/core/src/command-line/project-info')
+builder = require '@litexa/core/src/command-line/skill-builder'
 
 class exports.Logger
   constructor: (@name) ->
@@ -65,8 +66,6 @@ exports.runSkill = (name) ->
       installAt root
       installAt path.join root, 'litexa'
       resolve()
-
-  builder = require '@litexa/core/src/command-line/skill-builder'
 
   cleanTempDirectories()
   .then ->
@@ -130,8 +129,6 @@ exports.buildSkillModel = (name, locale='en-US') ->
       installAt root
       installAt path.join root, 'litexa'
       resolve()
-
-  builder = require '@litexa/core/src/command-line/skill-builder'
 
   cleanTempDirectories()
   .then ->

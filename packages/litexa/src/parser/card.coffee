@@ -7,8 +7,8 @@
 
 lib = module.exports.lib = {}
 
-{ AssetName } = require('./assets.coffee').lib
-{ ParserError } = require('./errors.coffee').lib
+{ AssetName } = require('./assets').lib
+{ ParserError } = require('./errors').lib
 
 class lib.Card
   constructor: (@location, @title, @content, @imageAssetName) ->

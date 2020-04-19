@@ -5,11 +5,11 @@
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ###
 
-debug = require('debug')('litexa')
 fs = require('fs')
 path = require('path')
-{PNG} = require('pngjs')
+{ PNG } = require('pngjs')
 Generator = require('./generator')
+debug = require('debug')('litexa')
 
 class SkillIconsGenerator extends Generator
   @description: 'skill icons'

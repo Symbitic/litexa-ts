@@ -39,7 +39,7 @@ writeDefault = (location, language, name) ->
   filename = "litexa.config.#{extension}"
 
   writeFile = (file) ->
-    source = path.join(__dirname, 'templates', 'common', language, file)
+    source = path.resolve(__dirname, '..', '..', 'templates', 'common', language, file)
 
     data = fs.readFileSync(source, 'utf8')
     data = searchReplace(data, {name})

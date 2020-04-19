@@ -34,3 +34,4 @@ artifacts.json
 
 # Project artifacts
 /packages/litexa-deploy-aws/dist/
+/packages/litexa/dist/

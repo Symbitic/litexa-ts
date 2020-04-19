@@ -16,6 +16,13 @@ debug = require('debug')('litexa')
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 path = require 'path'
+skillBuilder = require('./skill-builder')
+deploymentModule = require('../deployment/deployment-module')
+deploymentManifest = require('./deploy/manifest')
+JSONValidator = require('../parser/jsonValidator').lib.JSONValidator
+{ loadArtifacts } = require('../deployment/artifacts')
+{ getCurrentState } = require('../deployment/git')
+{ convertAssets } = require('../deployment/assets')
 
 LoggingChannel = require './loggingChannel'
 { formatLocationStart } = require('../parser/errors').lib
@@ -36,7 +43,7 @@ module.exports.run = (options) ->
     deploymentStartTime = new Date
 
     # ok, load skill
-    skill = await require('./skill-builder').build(options.root, options.deployment)
+    skill = await skillBuilder.build(options.root, options.deployment)
     options.deployment = options.deployment ? 'development'
     skill.projectInfo.variant = options.deployment
 
@@ -44,7 +51,7 @@ module.exports.run = (options) ->
     deployRoot = path.join skill.projectInfo.root, '.deploy', skill.projectInfo.variant
     mkdirp.sync deployRoot
 
-    logger.filename = path.join(deployRoot,'deploy.log')
+    logger.filename = path.join(deployRoot, 'deploy.log')
 
     # couldn't log this until now, but it's close enough
     logger.log "skill build complete in #{(new Date) - deploymentStartTime}ms"
@@ -64,8 +71,8 @@ module.exports.run = (options) ->
       throw new Error "couldn't find a deployment called `#{options.deployment}` in the deployments
         section of the Litexa config file, cannot continue."
 
-    deployModule = require('../deployment/deployment-module')(skill.projectInfo.root, deploymentOptions, logger)
-    deployModule.manifest = require('./deploy/manifest')
+    deployModule = deploymentModule(skill.projectInfo.root, deploymentOptions, logger)
+    deployModule.manifest = deploymentManifest
 
 
     # the context gets passed between the steps, to
@@ -80,13 +87,13 @@ module.exports.run = (options) ->
       cache: options.cache
       deploymentName: options.deployment
       deploymentOptions: skill.projectInfo.deployments[options.deployment]
-      JSONValidator: require('../parser/jsonValidator').lib.JSONValidator
+      JSONValidator: JSONValidator
 
   catch err
     logger.error err.message ? err
     return
 
-  require('../deployment/artifacts.coffee').loadArtifacts { context, logger }
+  loadArtifacts { context, logger }
   .then ->
     lastDeploymentInfo = context.artifacts.get 'lastDeployment'
     validateCoreVersion {
@@ -98,7 +105,7 @@ module.exports.run = (options) ->
       logger.log "canceled deployment"
       process.exit(0)
   .then ->
-    require('../deployment/git.coffee').getCurrentState()
+    getCurrentState()
   .then (info) ->
     context.artifacts.save "lastDeployment", {
       date: (new Date).toLocaleString()
@@ -120,7 +127,7 @@ module.exports.run = (options) ->
       assetsPipeline = Promise.resolve()
       .then ->
         # run all the external converters
-        require('../deployment/assets').convertAssets context, assetsLogger
+        convertAssets context, assetsLogger
       .then ->
         deployModule.assets.deploy context, assetsLogger
       step1.push assetsPipeline

@@ -78,7 +78,7 @@ class ProjectInfo
 
     return if @root == '--mockRoot' or @doNotParseExtensions
 
-    lib = require '../parser/parserlib.coffee'
+    lib = require '../parser/parserlib'
 
     deployModules = path.join @litexaRoot, 'node_modules'
 

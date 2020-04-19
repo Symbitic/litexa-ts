@@ -13,11 +13,17 @@ GenerateCommandDirector = require './generateCommandDirector'
 isp = require './isp'
 localization = require './localization'
 projectClean = require './project-clean'
+printers = require('./printers')
+projectConfig = require('./project-config')
+deploy = require('./deploy')
+test = require('./test')
+generate = require('./generate')
+logs = require('./logs')
+ProjectInfo = require('./project-info')
 
 packageVersion = require('../../package.json').version
 
 module.exports.run = ->
-
   root = process.cwd()
 
   program
@@ -37,7 +43,7 @@ module.exports.run = ->
         type: 'model'
         deployment: cmd.deployment
         region: cmd.parent.region
-      require('./printers.coffee').run options
+      printers.run options
 
   program
     .command 'handler'
@@ -49,7 +55,7 @@ module.exports.run = ->
         root: root
         deployment: cmd.deployment
         type: 'handler'
-      require('./printers.coffee').run options
+      printers.run options
 
   program
     .command 'path [directory]'
@@ -76,7 +82,7 @@ module.exports.run = ->
         console.log chalk.red(error.message)
 
       directory = directory ? process.cwd()
-      config = await require('./project-config.coffee').identifyConfigFileFromPath directory
+      config = await projectConfig.identifyConfigFileFromPath directory
       if config?
         root = path.dirname config
         if cmd.language == 'default'
@@ -142,7 +148,7 @@ module.exports.run = ->
         verbose: cmd.parent.verbose
         cache: cmd.cache
         coreVersion: packageVersion
-      await require('./deploy.coffee').run options
+      await deploy.run options
 
   program
     .command 'test [filter]'
@@ -184,7 +190,7 @@ module.exports.run = ->
         watch: cmd.watch
         device: cmd.device
         logRawData: cmd.logRawData
-      require('./test.coffee').run options
+      test.run options
 
   program
     .command 'generate [dir]'
@@ -193,6 +199,8 @@ module.exports.run = ->
     .option '-c, --config-language [configLanguage]', 'language of the generated configuration file, can be javascript, json, typescript, or coffee'
     .option '-s, --source-language [sourceLanguage]', 'language of the generated source code, can be javascript, typescript, or coffee'
     .option '-b, --bundling-strategy [bundlingStrategy]', 'the structure of the code layout as it pertains to litexa, can be webpack, npm-link, or none'
+    .option '-p, --project-name [projectName]', 'the name of the project (optional)'
+    .option '-t, --store-title-name [storeTitleName]', 'title to use in the skill store (optional)'
     .action (dir, cmd) ->
       errors = validator(
         cmd
@@ -240,7 +248,9 @@ module.exports.run = ->
         availableOptions: [
           'configLanguage'
           'sourceLanguage'
-          'bundlingStrategy'
+          'bundlingStrategy',
+          'projectName',
+          'storeTitleName'
         ]
       })
 
@@ -253,7 +263,9 @@ module.exports.run = ->
         configLanguage: selections.configLanguage ? 'javascript'
         sourceLanguage: selections.sourceLanguage ? 'javascript'
         bundlingStrategy: selections.bundlingStrategy ? 'none'
-      require('./generate.coffee').run options
+        projectName: selections.projectName
+        storeTitleName: selections.storeTitleName
+      generate.run options
 
   program
     .command 'logs'
@@ -265,19 +277,19 @@ module.exports.run = ->
         root: root
         deployment: cmd.deployment
         region: cmd.parent.region
-      require('./logs.coffee').run options
+      logs.run options
 
   program
     .command 'info'
     .description "prints out a litexa project's information block."
     .action (cmd) ->
-      chalk.enabled = cmd.parent.color
+      chalk.enabled = cmd.color
       options =
         root: root
-        region: cmd.parent.region
+        region: cmd.region
       try
-        config = await (require('./project-config').loadConfig root)
-        info = new (require('./project-info'))({jsonConfig: config})
+        config = await (projectConfig.loadConfig root)
+        info = new ProjectInfo({jsonConfig: config})
         console.log JSON.stringify info, null, 2
       catch err
         console.error err
@@ -330,8 +342,7 @@ module.exports.run = ->
 
   program
     .command 'reset [data]'
-    .description "resets specified data from local to the hosted skill via SMAPI. Currently
-      supports: isp (resets all in-skill products for testing)"
+    .description "resets specified data from local to the hosted skill via SMAPI. Currently supports: isp (resets all in-skill products for testing)"
     .option '-d --deployment [deployment]', "which deployment target to reset specified data for, using the name from the deployments map in the Litexa configuration file.", 'development'
     .option '-s --stage [stage]', "stage for which to reset skill data (either development or live)", 'development'
     .action (data, cmd) ->

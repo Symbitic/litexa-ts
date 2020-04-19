@@ -7,7 +7,7 @@
 
 assert = require 'assert'
 debug = require('debug')('litexa')
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
 describe 'supports async functions', ->
   it 'runs the async-functions integration test', ->

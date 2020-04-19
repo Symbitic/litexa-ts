@@ -5,7 +5,7 @@
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ###
 
-{ Skill } = require '../parser/skill.coffee'
+{ Skill } = require '../parser/skill'
 fs = require 'fs'
 path = require 'path'
 debug = require('debug')('litexa')
@@ -13,7 +13,7 @@ debug = require('debug')('litexa')
 config = require './project-config'
 
 build = (root, variant) ->
-  require('../parser/parserlib.coffee').__resetLib()
+  require('../parser/parserlib').__resetLib()
 
   jsonConfig = await config.loadConfig root
   projectInfo = new (require './project-info')({jsonConfig, variant})

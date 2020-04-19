@@ -18,6 +18,7 @@ class ConfigGenerator extends Generator
   constructor: (args) ->
     super(args)
     @bundlingStrategy = @options.bundlingStrategy
+    @projectName = @options.projectName
     @config = args.config
     @inquirer = args.inputHandler
     @templateFilesHandlerClass = args.templateFilesHandlerClass
@@ -38,8 +39,13 @@ class ConfigGenerator extends Generator
         }
         options.default = @defaultName if @defaultName?
 
-        result = await @inquirer.prompt(options)
-        @_writeFiles(result.projectName)
+        if @projectName? and projectNameValidate(@projectName)
+          @logger.log "Using project name \"#{@projectName}\""
+          @_writeFiles(@projectName)
+        else
+          result = await @inquirer.prompt(options)
+          console.log(result)
+          @_writeFiles(result.projectName)
 
         @_rootPath()
 

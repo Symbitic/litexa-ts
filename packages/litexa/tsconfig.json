@@ -1,12 +1,19 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./",
-    "rootDir": "./",
+    "rootDir": "./src/",
+    "outDir": "./dist/",
+    "allowJs": true,
     "paths": {
       "@root/*": [ "./*" ],
       "@src/*": [ "src/*" ],
       "@test/*": [ "test/*" ]
     }
-  }
+  },
+  "include": [
+    "./src/"
+  ],
+  "exclude": [
+    "./src/command-line/templates/"
+  ]
 }

@@ -46,9 +46,9 @@ class TemplateFilesHandler
     @logger.log "created a default #{filename} file"
 
   _listFiles: (language) ->
-    @readDir @resolvePath(__dirname, '../', 'templates', language)
+    @readDir @resolvePath(__dirname, '../../../', 'templates', language)
 
   _readFile: (language, file) ->
-    @readFile @resolvePath(__dirname, '../', 'templates', language, file), 'utf8'
+    @readFile @resolvePath(__dirname, '../../../', 'templates', language, file), 'utf8'
 
 module.exports = TemplateFilesHandler
