@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { ParserError } = require("./errors").lib;
+const { ParserError } = require('./errors');
 
 const operatorMap = {
   '+': '+',
@@ -904,5 +904,6 @@ const lib = {
 };
 
 module.exports = {
-  lib
+  lib,
+  ...lib
 };
