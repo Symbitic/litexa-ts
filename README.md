@@ -2,17 +2,15 @@
 
 ![Litexa Logo](./docs/assets/images/logo.png)
 
+> Fork of Litexa, rewritten in TypeScript.
+
 Litexa is an Alexa domain specific language, developed for long form multi-turn skills such as games.
-Its parser and tooling is implemented in Node.js and it compiles into JavaScript that expects Node.js
-as a runtime environment.
 
-**Note:** *Due to a dependency not compatible with Node.js v12 in the @litexa/assets-wav package, the 
-recommended local runtime and default deployment runtime is Node.js v10. If you are not using this
-package, you are welcome to upgrade both your local and runtime environment to Node.js v12. Refer to our
-[deployment documentation](./docs/book/deployment.md#lambda-configuration-optional) for more configuration 
-details.*
+Full documentation is available at <https://litexa.com>.
 
-Full documentation is available at <https://litexa.com>
+**NOTE: This is a fork of Litexa being refactored to use TypeScript instead of Coffeescript. This is still a work-in-progress.**
+
+**WARNING: `@litexa/assets-wav` has been removed for the time being. Eventually, it will be rewritten using a more up-to-date audio encoder/decoder, but for now, it has been removed.**
 
 **Disclaimer:**
 *Litexa is an Alexa Labs community-supported project (alpha) from the Alexa Games team at Amazon. We (Alexa Games) have
@@ -47,12 +45,6 @@ shorthand for managing APL documents and common design patterns. Click to learn 
 
 VS Code extensions for the Litexa language that provides syntax highlighting for ```.litexa```
 files. Click to learn more about the [VS Code extension](./docs/get-started/README.md#the-code).
-
-### @litexa/assets-wav
-
-A WAV/MP3 composer that can combine multiple overlapping samples into a single MP3 stream, and a
-binding layer for use in Literate Alexa. Click to learn more about the
-[WAV audio converter](./docs/book/appendix-wav-conversion.md).
 
 ## Developer Setup
 
