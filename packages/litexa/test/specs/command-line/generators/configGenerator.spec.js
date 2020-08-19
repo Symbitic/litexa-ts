@@ -1,18 +1,17 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { fake, match, spy, stub } = require('sinon');
+import { fake, match, spy, stub } from 'sinon';
+import chai, { use } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import ConfigGenerator from '../../../../src/command-line/generators/configGenerator';
 
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 const { assert, expect } = chai;
-
-const ConfigGenerator = require('../../../../src/command-line/generators/configGenerator');
 
 describe('ConfigGenerator', () => {
   describe('#description', () => {
@@ -171,7 +170,7 @@ describe('ConfigGenerator', () => {
 
       rootPathStub.restore();
 
-      return assert(
+      assert(
         inquirer.prompt.calledWith(
           match({
             message: 'What would you like to name the project? (default: "sample")'

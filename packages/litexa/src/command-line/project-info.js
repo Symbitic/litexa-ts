@@ -11,13 +11,14 @@
  * project data, like lists of asset and code files.
  */
 
-const fs = require('fs');
-const path = require('path');
-const globalModulesPath = require('global-modules');
-const debug = require('debug')('litexa-project-info');
-const LoggingChannel = require('./loggingChannel');
-const packageInfo = require('../../package.json');
-const lib = require('../parser/parserlib');
+import { existsSync, lstatSync, readdirSync, statSync } from 'fs';
+import { join, extname, relative } from 'path';
+import globalModulesPath from 'global-modules';
+import debug from 'debug';
+import LoggingChannel from './loggingChannel';
+import { name as _name, version } from '../../package.json';
+import lib from '../parser/parserlib';
+const projectInfoDebug = debug('litexa-project-info');
 
 class ProjectInfo {
   constructor(...args) {
@@ -30,8 +31,8 @@ class ProjectInfo {
     for (let k in jsonConfig) {
       this[k] = jsonConfig[k];
     }
-    this.litexaRoot = path.join(this.root, "litexa");
-    debug(`litexa root is ${this.litexaRoot}`);
+    this.litexaRoot = join(this.root, "litexa");
+    projectInfoDebug(`litexa root is ${this.litexaRoot}`);
     this.logger = logger;
 
     this.DEPLOY = this.deployments
@@ -51,23 +52,23 @@ class ProjectInfo {
 
   parseDirectory() {
     let f;
-    if (!fs.existsSync(this.litexaRoot) && (this.root !== '--mockRoot')) {
+    if (!existsSync(this.litexaRoot) && (this.root !== '--mockRoot')) {
       throw new Error(`Cannot initialize ProjectInfo no litexa sub directory found at ${this.litexaRoot}`);
     }
 
     // compiled summary of package/extension info, to be sent in each response
-    this.userAgent = `${packageInfo.name}/${packageInfo.version} Node/${process.version}`;
+    this.userAgent = `${_name}/${version} Node/${process.version}`;
 
     this.parseExtensions();
 
-    debug('beginning languages parse');
+    projectInfoDebug('beginning languages parse');
     this.languages = {};
     this.languages.default = this.parseLanguage(this.litexaRoot, 'default');
-    this.languagesRoot = path.join(this.litexaRoot, 'languages');
-    if (fs.existsSync(this.languagesRoot)) {
+    this.languagesRoot = join(this.litexaRoot, 'languages');
+    if (existsSync(this.languagesRoot)) {
       const filter = f => {
-        const fullPath = path.join(this.languagesRoot, f);
-        if (!fs.lstatSync(fullPath).isDirectory()) {
+        const fullPath = join(this.languagesRoot, f);
+        if (!lstatSync(fullPath).isDirectory()) {
           return false;
         }
         if (f[0] === '.') {
@@ -76,18 +77,18 @@ class ProjectInfo {
         return true;
       };
 
-      const languages = fs.readdirSync(this.languagesRoot)
+      const languages = readdirSync(this.languagesRoot)
         .filter(f => filter(f));
 
       for (let lang of languages) {
-        this.languages[lang] = this.parseLanguage(path.join(this.languagesRoot, lang), lang);
+        this.languages[lang] = this.parseLanguage(join(this.languagesRoot, lang), lang);
       }
     }
 
     // check for a localization summary file in the project's root dir
     for (let type of [ 'json', 'js' ]) {
-      const localizationFilePath = path.join(this.root, `localization.${type}`);
-      if (fs.existsSync(localizationFilePath)) {
+      const localizationFilePath = join(this.root, `localization.${type}`);
+      if (existsSync(localizationFilePath)) {
         this.localization = require(localizationFilePath);
       }
     }
@@ -110,20 +111,20 @@ class ProjectInfo {
       return;
     }
 
-    const deployModules = path.join(this.litexaRoot, 'node_modules');
+    const deployModules = join(this.litexaRoot, 'node_modules');
 
     const scanForExtensions = modulesRoot => {
-      debug(`scanning for extensions at ${modulesRoot}`);
+      projectInfoDebug(`scanning for extensions at ${modulesRoot}`);
       // this is fine, no extension modules to scan
-      if (!fs.existsSync(modulesRoot)) {
+      if (!existsSync(modulesRoot)) {
         return;
       }
 
-      for (let moduleName of fs.readdirSync(modulesRoot)) {
+      for (let moduleName of readdirSync(modulesRoot)) {
         if (moduleName.charAt(0) === '@') {
-          const scopePath = path.join(modulesRoot, moduleName);
-          for (let scopedModule of fs.readdirSync(scopePath)) {
-            const scopedModuleName = path.join(moduleName, scopedModule);
+          const scopePath = join(modulesRoot, moduleName);
+          for (let scopedModule of readdirSync(scopePath)) {
+            const scopedModuleName = join(moduleName, scopedModule);
             scanModuleForExtension(scopedModuleName, modulesRoot);
           }
         } else {
@@ -139,16 +140,16 @@ class ProjectInfo {
         return;
       }
 
-      const modulePath = path.join(modulesRoot, moduleName);
-      debug(`looking in ${modulePath}`);
+      const modulePath = join(modulesRoot, moduleName);
+      projectInfoDebug(`looking in ${modulePath}`);
 
       // attempt to load any of the supported types
       let found = false;
       let extensionFile = '';
       for (let type of [ 'coffee', 'js' ]) {
-        extensionFile = path.join(modulePath, `litexa.extension.${type}`);
-        debug(extensionFile);
-        if (fs.existsSync(extensionFile)) {
+        extensionFile = join(modulePath, `litexa.extension.${type}`);
+        projectInfoDebug(extensionFile);
+        if (existsSync(extensionFile)) {
           found = true;
           break;
         }
@@ -156,14 +157,14 @@ class ProjectInfo {
 
       // fine, this is not an extension module
       if (!found) {
-        debug(`module ${moduleName} did not contain litexa.extension.js/coffee, skipping for extensions`);
+        projectInfoDebug(`module ${moduleName} did not contain litexa.extension.js/coffee, skipping for extensions`);
         return;
       }
 
-      debug(`loading extension \`${moduleName}\``);
+      projectInfoDebug(`loading extension \`${moduleName}\``);
       // add extension name and version to userAgent, to be included in responses
       try {
-        const extensionPackageInfo = require(path.join(modulePath, 'package.json'));
+        const extensionPackageInfo = require(join(modulePath, 'package.json'));
         this.userAgent += ` ${moduleName}/${extensionPackageInfo.version}`;
       } catch (err) {
         console.warn(`WARNING: Failed to load a package.json for the extension module at ${modulePath}/package.json, while looking for its version number. Is it missing?`);
@@ -188,8 +189,8 @@ class ProjectInfo {
       }
     };
 
-    const nodeModules = path.join(this.root, 'node_modules');
-    const localModulesPath = path.join(this.root, 'modules');
+    const nodeModules = join(this.root, 'node_modules');
+    const localModulesPath = join(this.root, 'modules');
 
     return [ deployModules, nodeModules, localModulesPath, globalModulesPath ]
       .map((x) => scanForExtensions(x));
@@ -198,15 +199,15 @@ class ProjectInfo {
   parseLanguage(root, lang) {
     let kind, proc;
     let f;
-    debug(`parsing language at ${root}`);
+    projectInfoDebug(`parsing language at ${root}`);
     const def = {
       assetProcessors: {},
       convertedAssets: {
-        root: path.join(this.root, '.deploy', 'converted-assets', lang),
+        root: join(this.root, '.deploy', 'converted-assets', lang),
         files: []
       },
       assets: {
-        root: path.join(root, 'assets'),
+        root: join(root, 'assets'),
         files: []
       },
       code: {
@@ -239,18 +240,18 @@ class ProjectInfo {
     ];
 
     const codeFilter = f => {
-      const fullPath = path.join(def.code.root, f);
-      if (!fs.lstatSync(fullPath).isFile()) {
+      const fullPath = join(def.code.root, f);
+      if (!lstatSync(fullPath).isFile()) {
         return false;
       }
       if (f[0] === '.') {
         return false;
       }
-      const extension = path.extname(f);
+      const extension = extname(f);
       return !codeExtensionsWhitelist.includes(extension) ? false : true;
     };
 
-    def.code.files = fs.readdirSync(def.code.root)
+    def.code.files = readdirSync(def.code.root)
       .filter(f => codeFilter(f));
 
     const assetExtensionsWhitelist = [
@@ -301,18 +302,18 @@ class ProjectInfo {
     }
 
     // collect all the assets
-    if (fs.existsSync(def.assets.root)) {
+    if (existsSync(def.assets.root)) {
       // we support direct copy for some built in types
       const { logger } = this;
       const assetFilter = f => {
-        const fullPath = path.join(def.assets.root, f);
-        if (!fs.lstatSync(fullPath).isFile()) {
+        const fullPath = join(def.assets.root, f);
+        if (!lstatSync(fullPath).isFile()) {
           return false;
         }
         if (f[0] === '.') {
           return false;
         }
-        const extension = path.extname(f);
+        const extension = extname(f);
         if (!assetExtensionsWhitelist.includes(extension)) {
           return false;
         }
@@ -322,21 +323,21 @@ class ProjectInfo {
       def.assets.files = [];
 
       const processDirectory = root => {
-        debug(`processing asset dir ${root}`);
+        projectInfoDebug(`processing asset dir ${root}`);
         return (() => {
           const result1 = [];
-          for (f of Array.from(fs.readdirSync(root))) {
+          for (f of Array.from(readdirSync(root))) {
             if (Array.from(fileBlacklist).includes(f)) { continue; }
 
-            f = path.join(root, f);
-            const stat = fs.statSync(f);
+            f = join(root, f);
+            const stat = statSync(f);
             if (stat.isDirectory()) {
               processDirectory(f);
               continue;
             }
 
-            f = path.relative(def.assets.root, f);
-            debug(`processing asset file ${f}`);
+            f = relative(def.assets.root, f);
+            projectInfoDebug(`processing asset file ${f}`);
 
             let processed = false;
             if (assetFilter(f)) {
@@ -356,7 +357,7 @@ class ProjectInfo {
               });
 
               if ((outputs != null ? outputs.length : undefined) > 0) {
-                debug(`${kind}: ${f} -> ${outputs}`);
+                projectInfoDebug(`${kind}: ${f} -> ${outputs}`);
                 processed = true;
                 proc.inputs.push(f);
                 for (let o of Array.from(outputs)) {
@@ -388,7 +389,7 @@ the same output.`
       processDirectory(def.assets.root);
     }
 
-    debug(`project info: \n ${JSON.stringify(def, null, 2)}`);
+    projectInfoDebug(`project info: \n ${JSON.stringify(def, null, 2)}`);
     return def;
   }
 
@@ -399,7 +400,7 @@ the same output.`
       info = this.languages.default[type];
       list = (result[type] = {});
       for (name of Array.from(info.files)) {
-        list[name] = path.join(info.root, name);
+        list[name] = join(info.root, name);
       }
     }
     if (lang in this.languages) {
@@ -407,7 +408,7 @@ the same output.`
         info = this.languages[lang][type];
         list = result[type];
         for (name of Array.from(info.files)) {
-          list[name] = path.join(info.root, name);
+          list[name] = join(info.root, name);
         }
       }
     }
@@ -424,4 +425,4 @@ ProjectInfo.createMock = () => {
   return new ProjectInfo({ jsonConfig: config, variant: "mockTesting" });
 };
 
-module.exports = ProjectInfo;
+export default ProjectInfo;

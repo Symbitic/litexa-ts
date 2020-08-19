@@ -5,7 +5,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const StructureCreator = require('./structureCreator');
+const StructureCreator = require('./structureCreator').default;
 
 /*
 * Directory Structure

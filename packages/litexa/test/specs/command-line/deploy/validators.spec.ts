@@ -1,14 +1,13 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
 import { expect } from 'chai';
 import { fake, spy } from 'sinon';
-
-const { validateCoreVersion } = require('@src/command-line/deploy/validators');
+import { validateCoreVersion } from '../../../../src/command-line/deploy/validators';
 
 describe('Version validator', () => {
   let fakeInquirer: any = undefined;

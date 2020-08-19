@@ -1,56 +1,50 @@
 /*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-/*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const {assert, expect} = require('chai');
+import DirectoryCreator from '../../../../src/command-line/generators/directoryCreator';
+import InlinedStructureCreator from '../../../../src/command-line/generators/directory/inlinedStructureCreator';
+import SeparateStructureCreator from '../../../../src/command-line/generators/directory/separateStructureCreator';
+import BundlerStructureCreator from '../../../../src/command-line/generators/directory/bundlerStructureCreator';
+import { expect } from 'chai';
+import { MockTemplateFilesHandlerInterface } from '../../../helpers';
 
-const Test = require('@test/helpers');
-
-const DirectoryCreator = require('@src/command-line/generators/directoryCreator');
-const InlinedStructureCreator = require('@src/command-line/generators/directory/inlinedStructureCreator');
-const SeparateStructureCreator = require('@src/command-line/generators/directory/separateStructureCreator');
-const BundlerStructureCreator = require('@src/command-line/generators/directory/bundlerStructureCreator');
-
-describe('DirectoryCreator', () => describe('#constructor', function() {
+describe('DirectoryCreator', () => describe('#constructor', () => {
   let options = undefined;
-  beforeEach(function() {
+  beforeEach(() => {
     const loggerInterface = {
       log() { return undefined; }
     };
-    return options = {
+    options = {
       bundlingStrategy: 'none',
       logger: loggerInterface,
       litexaDirectory: 'litexa',
-      templateFilesHandlerClass: Test.MockTemplateFilesHandlerInterface
-    };});
-
-  it('creates an inlined structure creator instance', function() {
-    const creator = new DirectoryCreator(options);
-    return expect(creator).to.be.instanceOf(InlinedStructureCreator);
+      templateFilesHandlerClass: MockTemplateFilesHandlerInterface
+    };
   });
 
-  it('creates an separate structure creator instance', function() {
+  it('creates an inlined structure creator instance', () => {
+    const creator = new DirectoryCreator(options);
+    expect(creator).to.be.instanceOf(InlinedStructureCreator);
+  });
+
+  it('creates an separate structure creator instance', () => {
     options.bundlingStrategy = 'npm-link';
     const creator = new DirectoryCreator(options);
-    return expect(creator).to.be.instanceOf(SeparateStructureCreator);
+    expect(creator).to.be.instanceOf(SeparateStructureCreator);
   });
 
-  it('creates an bundler structure creator instance', function() {
+  it('creates an bundler structure creator instance', () => {
     options.bundlingStrategy = 'webpack';
     const creator = new DirectoryCreator(options);
-    return expect(creator).to.be.instanceOf(BundlerStructureCreator);
+    expect(creator).to.be.instanceOf(BundlerStructureCreator);
   });
 
-  return it('throws an error for an unsupported strategy', function() {
+  it('throws an error for an unsupported strategy', () => {
     options.bundlingStrategy = 'unsupported';
-    return expect(() => new DirectoryCreator(options)).to.throw();
+    expect(() => new DirectoryCreator(options)).to.throw();
   });
 }));

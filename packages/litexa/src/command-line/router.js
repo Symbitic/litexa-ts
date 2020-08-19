@@ -5,25 +5,24 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const program = require('commander');
-const chalk = require('chalk');
-const path = require('path');
-const validator = require('./optionsValidator');
-const GenerateCommandDirector = require('./generateCommandDirector');
-const isp = require('./isp');
-const localization = require('./localization');
-const projectClean = require('./project-clean');
-const printers = require('./printers');
-const projectConfig = require('./project-config');
-const deploy = require('./deploy');
-const test = require('./test');
-const generate = require('./generate');
-const logs = require('./logs');
-const ProjectInfo = require('./project-info');
+import program from 'commander';
+import chalk from 'chalk';
+import path from 'path';
+import validator from './optionsValidator';
+import GenerateCommandDirector from './generateCommandDirector';
+import isp from './isp';
+import localization from './localization';
+import projectClean from './project-clean';
+import printers from './printers';
+import projectConfig from './project-config';
+import deploy from './deploy';
+import test from './test';
+import generate from './generate';
+import logs from './logs';
+import ProjectInfo from './project-info';
+import { version as packageVersion } from '../../package.json';
 
-const packageVersion = require('../../package.json').version;
-
-async function run() {
+export async function run() {
   let root = process.cwd();
 
   program
@@ -438,8 +437,4 @@ async function run() {
   });
 
   return program.parse(process.argv);
-};
-
-module.exports = {
-  run
 };

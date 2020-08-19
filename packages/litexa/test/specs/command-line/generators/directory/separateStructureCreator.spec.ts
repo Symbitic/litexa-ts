@@ -1,20 +1,20 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { assert } = require('chai');
-const { match, spy, stub } = require('sinon');
-const path = require('path');
+import { assert } from 'chai';
+import { match, spy, stub } from 'sinon';
+import { join } from 'path';
 
-const SeparateStructureCreator = require('@src/command-line/generators/directory/separateStructureCreator');
+import SeparateStructureCreator from '../../../../../src/command-line/generators/directory/separateStructureCreator';
 
 describe('SeparateStructureCreator', () => {
   const rootPath = '.';
-  let loggerInterface = undefined;
-  let templateFilesHandler = undefined;
+  let loggerInterface: any = undefined;
+  let templateFilesHandler: any = undefined;
 
   beforeEach(() => {
     loggerInterface = {
@@ -75,12 +75,12 @@ describe('SeparateStructureCreator', () => {
       separateStructureCreator.sync();
 
       const expectedDirsLitexa = [
-        path.join('common', 'litexa'),
-        path.join('separate', 'litexa')
+        join('common', 'litexa'),
+        join('separate', 'litexa')
       ];
       const expectedDirsJavaScript = [
-        path.join('common', 'javascript'),
-        path.join('separate', 'javascript')
+        join('common', 'javascript'),
+        join('separate', 'javascript')
       ];
 
       assert(syncDirSpy.calledWith(match({ sourcePaths: expectedDirsLitexa })),
@@ -102,12 +102,12 @@ describe('SeparateStructureCreator', () => {
       separateStructureCreator.sync();
 
       const expectedDirsLitexa = [
-        path.join('common', 'litexa'),
-        path.join('separate', 'litexa')
+        join('common', 'litexa'),
+        join('separate', 'litexa')
       ];
       const expectedDirsTypeScript = [
-        path.join('common', 'typescript', 'source'),
-        path.join('separate', 'typescript')
+        join('common', 'typescript', 'source'),
+        join('separate', 'typescript')
       ];
 
       assert(syncDirSpy.calledWith(match({ sourcePaths: expectedDirsLitexa })),
@@ -129,12 +129,12 @@ describe('SeparateStructureCreator', () => {
       separateStructureCreator.sync();
 
       const expectedDirsLitexa = [
-        path.join('common', 'litexa'),
-        path.join('separate', 'litexa')
+        join('common', 'litexa'),
+        join('separate', 'litexa')
       ];
       const expectedDirsCoffeeScript = [
-        path.join('common', 'coffee'),
-        path.join('separate', 'coffee')
+        join('common', 'coffee'),
+        join('separate', 'coffee')
       ];
 
       assert(syncDirSpy.calledWith(match({ sourcePaths: expectedDirsLitexa })),

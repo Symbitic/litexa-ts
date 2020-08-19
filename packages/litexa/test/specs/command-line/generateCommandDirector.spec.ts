@@ -5,10 +5,10 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const {assert, expect} = require('chai');
-const {match, spy, stub} = require('sinon');
+import { assert, expect } from 'chai';
+import { match, spy, stub } from 'sinon';
 
-const GenerateCommandDirector = require('@src/command-line/generateCommandDirector');
+import GenerateCommandDirector from '../../../src/command-line/generateCommandDirector';
 
 describe('GenerateCommandDirector', () => {
   let targetDirectory: any = undefined;

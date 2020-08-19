@@ -1,13 +1,13 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const path = require('path');
-const StructureCreator = require('./structureCreator');
-require('../../../getter.polyfill');
+import { join } from 'path';
+import StructureCreator from './structureCreator';
+import '../../../getter.polyfill';
 
 /*
 * Directory Structure
@@ -69,32 +69,32 @@ class BundlerStructureCreator extends StructureCreator {
 
     this.getter('libDirectory', function () {
       if (this.libFolder) { return this.libFolder; }
-      return this.libFolder = path.join(this.rootPath, libDir);
+      return this.libFolder = join(this.rootPath, libDir);
     });
 
     this.getter('testDirectory', function () {
       if (this.testFolder) { return this.testFolder; }
-      return this.testFolder = path.join(this.rootPath, testDir);
+      return this.testFolder = join(this.rootPath, testDir);
     });
 
     this.getter('libServicesDirectory', function () {
       if (this.libServicesFolder) { return this.libServicesFolder; }
-      return this.libServicesFolder = path.join(this.libDirectory, 'services');
+      return this.libServicesFolder = join(this.libDirectory, 'services');
     });
 
     this.getter('libComponentsDirectory', function () {
       if (this.libComponentsFolder) { return this.libComponentsFolder; }
-      return this.libComponentsFolder = path.join(this.libDirectory, 'components');
+      return this.libComponentsFolder = join(this.libDirectory, 'components');
     });
 
     this.getter('testServicesDirectory', function () {
       if (this.testServicesFolder) { return this.testServicesFolder; }
-      return this.testServicesFolder = path.join(this.testDirectory, 'services');
+      return this.testServicesFolder = join(this.testDirectory, 'services');
     });
 
     this.getter('testComponentsDirectory', function () {
       if (this.testComponentsFolder) { return this.testComponentsFolder; }
-      return this.testComponentsFolder = path.join(this.testDirectory, 'components');
+      return this.testComponentsFolder = join(this.testDirectory, 'components');
     });
   }
 
@@ -214,4 +214,4 @@ class BundlerStructureCreator extends StructureCreator {
 };
 BundlerStructureCreator.initClass();
 
-module.exports = BundlerStructureCreator;
+export default BundlerStructureCreator;

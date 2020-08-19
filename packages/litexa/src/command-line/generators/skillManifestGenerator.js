@@ -5,15 +5,15 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const extensions = require('../fileExtensions');
-const fs = require('fs');
-const manifest = require('../manifest');
-const path = require('path');
-const Generator = require('./generator');
-const skillStoreTitleValidate = require('./validators/skillStoreTitleValidator');
-require('../../getter.polyfill');
+import extensions from '../fileExtensions';
+import { existsSync, writeFileSync } from 'fs';
+import manifest from '../manifest';
+import { join } from 'path';
+import Generator from './generator';
+import skillStoreTitleValidate from './validators/skillStoreTitleValidator';
+import '../../getter.polyfill';
 
-class SkillManifestGenerator extends Generator {
+export default class SkillManifestGenerator extends Generator {
   static initClass() {
     this.description = 'skill manifest';
 
@@ -44,9 +44,9 @@ class SkillManifestGenerator extends Generator {
     }
 
     const filename = `skill.${extension}`;
-    const filePath = path.join(this._rootPath(), `skill.${extension}`);
+    const filePath = join(this._rootPath(), `skill.${extension}`);
 
-    if (fs.existsSync(filePath)) {
+    if (existsSync(filePath)) {
       this.logger.log(`existing ${filename} found -> skipping creation`);
       return Promise.resolve();
     }
@@ -70,7 +70,7 @@ class SkillManifestGenerator extends Generator {
     }
 
     const skillManifest = manifest.create(name, this._configLanguage());
-    fs.writeFileSync(filePath, skillManifest, 'utf8');
+    writeFileSync(filePath, skillManifest, 'utf8');
     this.logger.log(`creating ${filename} -> contains skill manifest and should be version controlled`);
   }
 
@@ -88,5 +88,3 @@ class SkillManifestGenerator extends Generator {
   }
 }
 SkillManifestGenerator.initClass();
-
-module.exports = SkillManifestGenerator;

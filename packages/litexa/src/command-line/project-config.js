@@ -1,8 +1,8 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
 /*
@@ -19,18 +19,20 @@
 
 const fs = require('fs');
 const path = require('path');
-const debug = require('debug')('litexa');
+const debug = require('debug');
 const { promisify } = require('util');
-const extensions = require('./fileExtensions');
+const extensions = require('./fileExtensions').default;
 const searchReplace = require('./generators/searchReplace');
 const projectNameValidate = require('./generators/validators/projectNameValidator');
 const ts = require('typescript');
+
+const litexaDebug = debug('litexa');
 
 const stat = promisify(fs.stat);
 const readdir = promisify(fs.readdir);
 
 function writeDefault(location, language, name) {
-  debug(`name is: ${name}`);
+  litexaDebug(`name is: ${name}`);
 
   const extension = extensions[language];
   const filename = `litexa.config.${extension}`;
@@ -59,7 +61,7 @@ function writeDefault(location, language, name) {
 
 async function identifyConfigFileFromPath(location) {
   // searches the given location and its ancestors for the first viable Litexa config file
-  debug(`beginning search for a Litexa config file at ${location}`);
+  litexaDebug(`beginning search for a Litexa config file at ${location}`);
 
   const isCorrectFilename = fullpath => {
     const base = path.basename(fullpath);
@@ -79,7 +81,7 @@ async function identifyConfigFileFromPath(location) {
     if (!isCorrectFilename(file)) {
       continue;
     }
-    debug(`found root: ${location}`);
+    litexaDebug(`found root: ${location}`);
 
     return path.join(location, file);
   }

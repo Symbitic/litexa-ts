@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const inquirer = require('inquirer');
+import inquirer from 'inquirer';
 
 class GenerateCommandDirector {
   constructor(args) {
@@ -109,4 +109,4 @@ class GenerateCommandDirector {
   }
 }
 
-module.exports = GenerateCommandDirector;
+export default GenerateCommandDirector;

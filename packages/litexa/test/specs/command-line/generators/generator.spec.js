@@ -1,33 +1,27 @@
 /*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-/*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const {assert, expect} = require('chai');
+import { assert, expect } from 'chai';
+import Generator from '../../../../src/command-line/generators/generator';
 
-const Generator = require('@src/command-line/generators/generator');
-
-describe('Generator', function() {
+describe('Generator', () => {
   let options = undefined;
   let logger = undefined;
 
-  beforeEach(function() {
+  beforeEach(() => {
     options = {
       root: '.'
     };
-    return logger = {
+    logger = {
       log() { return undefined; }
-    };});
+    };
+  });
 
-  describe('#constructor', () => it('assigns args appropriately', function() {
+  describe('#constructor', () => it('assigns args appropriately', () => {
     const generator = new Generator({
       options,
       logger
@@ -37,28 +31,28 @@ describe('Generator', function() {
     assert(generator.hasOwnProperty('logger'), 'created logger on the object as a property');
 
     expect(generator.options).to.deep.equal(options);
-    return expect(generator.logger).to.deep.equal(logger);
+    expect(generator.logger).to.deep.equal(logger);
   }));
 
-  describe('#_rootPath', () => it('extracts the root path from options', function() {
+  describe('#_rootPath', () => it('extracts the root path from options', () => {
     const generator = new Generator({
       options,
       logger
     });
-    return expect(generator._rootPath()).to.equal('.');
+    expect(generator._rootPath()).to.equal('.');
   }));
 
-  return describe('#generate', function() {
-    it('throws an error if you try to call generate directly', function() {
+  describe('#generate', () => {
+    it('throws an error if you try to call generate directly', () => {
       const generator = new Generator({
         options,
         logger
       });
 
-      return expect(() => generator.generate()).to.throw('Generator#generate not implemented');
+      expect(() => generator.generate()).to.throw('Generator#generate not implemented');
     });
 
-    return it('throws an error if a class that extended it does not implement #generate', function() {
+    it('throws an error if a class that extended it does not implement #generate', () => {
       class MockGenerator extends Generator {
         static initClass() {
           this.description = 'Mock Generator';
@@ -71,7 +65,7 @@ describe('Generator', function() {
         logger
       });
 
-      return expect(() => generator.generate()).to.throw('MockGenerator#generate not implemented');
+      expect(() => generator.generate()).to.throw('MockGenerator#generate not implemented');
     });
   });
 });

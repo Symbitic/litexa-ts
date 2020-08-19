@@ -1,20 +1,14 @@
 /*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-/*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-require('@src/setter.polyfill');
-const {expect} = require('chai');
+import '../../src/setter.polyfill';
+import { expect } from 'chai';
 
-describe('@setter', () => it('allows me to use the @setter syntax to polyfill ES6 setter behavior', function() {
+describe('@setter', () => it('allows me to use the @setter syntax to polyfill ES6 setter behavior', () => {
   const attribute = 'myAttribute';
   const value = 'expectedValue';
 

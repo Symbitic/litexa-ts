@@ -1,23 +1,23 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const chalk = require('chalk');
-const path = require('path');
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const chokidar = require('chokidar');
-const skillBuilder = require('./skill-builder');
-const projectConfig = require('./project-config');
+import chalk from 'chalk';
+import { join } from 'path';
+import { writeFileSync } from 'fs';
+import { sync } from 'mkdirp';
+import chokidar from 'chokidar';
+import { build } from './skill-builder';
+import { loadConfig } from './project-config';
 
 async function run(options) {
   const logger = options.logger ? options.logger : console;
 
   if (logger.disableColor) {
-    chalk.enabled = false;
+    enabled = false;
   }
 
   let testFailed = false;
@@ -67,20 +67,20 @@ async function run(options) {
     important(`${(new Date).toLocaleString()} running tests in ${options.root} with ${filterReport}`);
 
     try {
-      skill = await skillBuilder.build(options.root, options.deployment);
+      skill = await build(options.root, options.deployment);
     } catch (err) {
       return error(err);
     }
 
-    skill.projectInfo.testRoot = path.join(skill.projectInfo.root, '.test', skill.projectInfo.variant);
-    mkdirp.sync(skill.projectInfo.testRoot);
+    skill.projectInfo.testRoot = join(skill.projectInfo.root, '.test', skill.projectInfo.variant);
+    sync(skill.projectInfo.testRoot);
     const { testRoot } = skill.projectInfo;
 
-    fs.writeFileSync(path.join(skill.projectInfo.testRoot,'project-config.json'), JSON.stringify(skill.projectInfo, null, 2), 'utf8');
+    writeFileSync(join(skill.projectInfo.testRoot,'project-config.json'), JSON.stringify(skill.projectInfo, null, 2), 'utf8');
 
     try {
       const lambda = skill.toLambda();
-      fs.writeFileSync(path.join(testRoot,'lambda.js'), lambda, 'utf8');
+      writeFileSync(join(testRoot,'lambda.js'), lambda, 'utf8');
     } catch (err) {
       return error(err);
     }
@@ -98,25 +98,25 @@ async function run(options) {
 
     try {
       const model = skill.toModelV2(testOptions.region);
-      fs.writeFileSync(path.join(testRoot, 'model.json'), JSON.stringify(model, null, 2), 'utf8');
+      writeFileSync(join(testRoot, 'model.json'), JSON.stringify(model, null, 2), 'utf8');
     } catch (err) {
       return error(err);
     }
 
-    return await(new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       try {
         return skill.runTests(testOptions, function(err, result) {
           logger.log(' ');
-          fs.writeFileSync(path.join(testRoot,'libraryCode.js'), skill.libraryCode, 'utf8');
+          writeFileSync(join(testRoot,'libraryCode.js'), skill.libraryCode, 'utf8');
           if (err != null) {
             error(err, result);
             return resolve();
           }
 
-          fs.writeFileSync(path.join(testRoot,'output.json'), JSON.stringify(result, null, 2), 'utf8');
+          writeFileSync(join(testRoot,'output.json'), JSON.stringify(result, null, 2), 'utf8');
           if ((result != null ? result.log : undefined) != null) {
             result.log.unshift((new Date).toLocaleString());
-            fs.writeFileSync(path.join(testRoot,'output.log'), result.log.join('\n'), 'utf8');
+            writeFileSync(join(testRoot,'output.log'), result.log.join('\n'), 'utf8');
             for (let line of Array.from(result.log)) {
               if (line.indexOf('✘') >= 0) {
                 for (let s of Array.from(line.split('\n'))) {
@@ -151,8 +151,7 @@ async function run(options) {
         error(err);
         return resolve();
       }
-    })
-    );
+    });
   };
 
   if (options.watch) {
@@ -163,15 +162,15 @@ async function run(options) {
       }
       const ping = function() {
         debounce = null;
-        return await(doTest());
+        return doTest();
       };
       return debounce = setTimeout(ping, 100);
     };
 
-    const config = await projectConfig.loadConfig(options.root);
+    const config = await loadConfig(options.root);
 
     chokidar.watch(`${config.root}/**/*.{litexa,coffee,js,json}`, {
-      ignored: [ path.join(config.root, 'node_modules') ],
+      ignored: [ join(config.root, 'node_modules') ],
       ignoreInitial: true
     })
     .on('add', path => {
@@ -194,6 +193,6 @@ async function run(options) {
   }
 };
 
-module.exports = {
+export default {
   run
 };

@@ -5,21 +5,21 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const inquirer = require('inquirer');
-const { Artifacts } = require('../deployment/artifacts');
+import inquirer from 'inquirer';
+import { Artifacts } from '../deployment/artifacts';
 
-const ArtifactTrackerGenerator = require('./generators/artifactTrackerGenerator');
-const AssetsDirectoryGenerator = require('./generators/assetsDirectoryGenerator');
-const ConfigGenerator = require('./generators/configGenerator');
-const DirectoryCreator = require('./generators/directoryCreator');
-const DirectoryStructureCreator = require('./generators/directory/structureCreator');
-const LoggingChannel = require('./loggingChannel');
-const ProjectInfo = require('./project-info');
-const SkillIconsGenerator = require('./generators/skillIconsGenerator');
-const SkillManifestGenerator = require('./generators/skillManifestGenerator');
-const SourceCodeGenerator = require('./generators/sourceCodeGenerator');
-const TemplateFilesHandler = require('./generators/templateFilesHandler');
-const config = require('./project-config');
+import ArtifactTrackerGenerator from './generators/artifactTrackerGenerator';
+import AssetsDirectoryGenerator from './generators/assetsDirectoryGenerator';
+import ConfigGenerator from './generators/configGenerator';
+import DirectoryCreator from './generators/directoryCreator';
+import DirectoryStructureCreator from './generators/directory/structureCreator';
+import LoggingChannel from './loggingChannel';
+import ProjectInfo from './project-info';
+import SkillIconsGenerator from './generators/skillIconsGenerator';
+import SkillManifestGenerator from './generators/skillManifestGenerator';
+import SourceCodeGenerator from './generators/sourceCodeGenerator';
+import TemplateFilesHandler from './generators/templateFilesHandler';
+import config from './project-config';
 
 async function run(options) {
   const logger = new LoggingChannel({
@@ -68,6 +68,6 @@ async function run(options) {
   }
 };
 
-module.exports = {
+export default {
   run
 };

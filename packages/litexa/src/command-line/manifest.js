@@ -5,10 +5,10 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const fs = require('fs');
-const path = require('path');
-const extensions = require('./fileExtensions');
-const searchReplace = require('./generators/searchReplace');
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import extensions from './fileExtensions';
+import searchReplace from './generators/searchReplace';
 
 function create(name, language) {
   name = name.replace(/[_\.\-]/gi, ' ')
@@ -20,8 +20,8 @@ function create(name, language) {
 
   const extension = extensions[language];
   const lang = language === 'typescript' ? `${language}/config` : language;
-  const source = path.join(__dirname, '..', '..', 'templates', 'common', lang, `skill.${extension}`);
-  const data = fs.readFileSync(source, 'utf8');
+  const source = join(__dirname, '..', '..', 'templates', 'common', lang, `skill.${extension}`);
+  const data = readFileSync(source, 'utf8');
 
   return searchReplace(data, {
     name,
@@ -29,6 +29,6 @@ function create(name, language) {
   });
 }
 
-module.exports = {
+export default {
   create
 };

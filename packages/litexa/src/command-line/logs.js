@@ -5,14 +5,14 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const path = require('path');
-const mkdirp = require('mkdirp');
-const LoggingChannel = require('./loggingChannel');
-const config = require('./project-config');
-const ProjectInfo = require('./project-info');
-const deploymentModule = require('../deployment/deployment-module');
+import path from 'path';
+import mkdirp from 'mkdirp';
+import LoggingChannel from './loggingChannel';
+import config from './project-config';
+import ProjectInfo from './project-info';
+import deploymentModule from '../deployment/deployment-module';
 
-async function run(options) {
+export async function run(options) {
   const logger = new LoggingChannel({
     logStream: options.logger ? options.logger : console,
     logPrefix: 'logs',
@@ -52,6 +52,6 @@ async function run(options) {
   }
 }
 
-module.exports = {
+export default {
   run
 };

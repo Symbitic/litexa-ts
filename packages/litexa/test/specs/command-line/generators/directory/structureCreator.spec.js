@@ -1,59 +1,59 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const {assert, expect} = require('chai');
-const {match, spy, stub} = require('sinon');
+import { assert, expect } from 'chai';
+import { match, spy, stub } from 'sinon';
 
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const rimraf = require('rimraf');
+import { existsSync } from 'fs';
+import { sync as _sync } from 'mkdirp';
+import { sync as __sync } from 'rimraf';
 
-const StructureCreator = require('@src/command-line/generators/directory/structureCreator');
+import StructureCreator from '../../../../../src/command-line/generators/directory/structureCreator';
 
-describe('StructureCreator', function() {
+describe('StructureCreator', () => {
   const tmpDir = 'tmp';
   let loggerInterface = undefined;
   let mkdirpInterface = undefined;
 
-  beforeEach(function() {
+  beforeEach(() => {
     loggerInterface = {
       log() { return undefined; }
     };
     mkdirpInterface = {
       sync() { return undefined; }
     };
-    return mkdirp.sync(tmpDir);
+    _sync(tmpDir);
   });
 
-  afterEach(function() {
-    if (fs.existsSync(tmpDir)) {
-      return rimraf.sync(tmpDir);
+  afterEach(() => {
+    if (existsSync(tmpDir)) {
+      return __sync(tmpDir);
     }
   });
 
-  describe('#constructor', () => it('assigns args appropriately', function() {
+  describe('#constructor', () => it('assigns args appropriately', () => {
     const creator = new StructureCreator({
       logger: loggerInterface
     });
 
     assert(creator.hasOwnProperty('logger'), 'created logger on the object as a property');
-    return expect(creator.logger).to.deep.equal(loggerInterface);
+    expect(creator.logger).to.deep.equal(loggerInterface);
   }));
 
-  describe('#create', function() {
-    it('throws an error if you try to call create directly', function() {
+  describe('#create', () => {
+    it('throws an error if you try to call create directly', () => {
       const creator = new StructureCreator({
         logger: loggerInterface
       });
 
-      return expect(() => creator.create()).to.throw('StructureCreator#create not implemented');
+      expect(() => creator.create()).to.throw('StructureCreator#create not implemented');
     });
 
-    return it('throws an error if a class that extended it does not implement #create', function() {
+    it('throws an error if a class that extended it does not implement #create', () => {
       class MockCreator extends StructureCreator {
         constructor(opts) {
           super(opts);
@@ -65,20 +65,20 @@ describe('StructureCreator', function() {
         logger: loggerInterface
       });
 
-      return expect(() => creator.create()).to.throw('MockCreator#create not implemented');
+      expect(() => creator.create()).to.throw('MockCreator#create not implemented');
     });
   });
 
-  describe('#sync', function() {
-    it('throws an error if you try to call sync directly', function() {
+  describe('#sync', () => {
+    it('throws an error if you try to call sync directly', () => {
       const creator = new StructureCreator({
         logger: loggerInterface
       });
 
-      return expect(() => creator.sync()).to.throw('StructureCreator#sync not implemented');
+      expect(() => creator.sync()).to.throw('StructureCreator#sync not implemented');
     });
 
-    return it('throws an error if a class that extended it does not implement #sync', function() {
+    it('throws an error if a class that extended it does not implement #sync', () => {
       class MockCreator extends StructureCreator {
         constructor(opts) {
           super(opts);
@@ -90,12 +90,12 @@ describe('StructureCreator', function() {
         logger: loggerInterface
       });
 
-      return expect(() => creator.sync()).to.throw('MockCreator#sync not implemented');
+      expect(() => creator.sync()).to.throw('MockCreator#sync not implemented');
     });
   });
 
-  return describe('#ensureDirExists', function() {
-    it('does nothing if a directory exists', function() {
+  describe('#ensureDirExists', () => {
+    it('does nothing if a directory exists', () => {
       const mkdirSpy = spy(mkdirpInterface, 'sync');
 
       const structureCreator = new StructureCreator({
@@ -104,11 +104,11 @@ describe('StructureCreator', function() {
       });
       structureCreator.ensureDirExists('tmp');
 
-      return assert(mkdirSpy.notCalled, 'did not write to disk');
+      assert(mkdirSpy.notCalled, 'did not write to disk');
     });
 
-    return it("creates the directory if it doesn't exist and lets the user know", function() {
-      rimraf.sync(tmpDir);
+    it("creates the directory if it doesn't exist and lets the user know", () => {
+      __sync(tmpDir);
 
       const mkdirSpy = spy(mkdirpInterface, 'sync');
       const logSpy = spy(loggerInterface, 'log');
@@ -120,7 +120,7 @@ describe('StructureCreator', function() {
       structureCreator.ensureDirExists(tmpDir);
 
       assert(mkdirSpy.calledOnceWith(tmpDir), 'made call to write to disk only once');
-      return assert(logSpy.calledWith(match(`no ${tmpDir} directory found -> creating it`)),
+      assert(logSpy.calledWith(match(`no ${tmpDir} directory found -> creating it`)),
         'informs the user that it created a directory');
     });
   });

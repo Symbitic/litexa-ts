@@ -1,14 +1,13 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
 import { expect } from 'chai';
 import { assert, stub, SinonStub } from 'sinon';
-
-const smapi = require('@src/command-line/api/smapi');
+import smapi from '../../../../src/command-line/api/smapi';
 
 interface Args {
   askProfile?: string;

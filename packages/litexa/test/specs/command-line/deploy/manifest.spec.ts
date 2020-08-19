@@ -6,8 +6,7 @@
  */
 
 import { expect } from 'chai';
-
-const { testing } = require('@src/command-line/deploy/manifest');
+import { testing } from '../../../../src/command-line/deploy/manifest';
 
 describe('Skill manifest deployment', () => {
   let sampleManifestContext: any = undefined;

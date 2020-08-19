@@ -1,19 +1,14 @@
 /*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-/*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const {assert, expect} = require('chai');
-const validator = require('@src/command-line/optionsValidator');
+import { assert, expect } from 'chai';
+import validator from '../../../src/command-line/optionsValidator';
 
-describe('OptionsValidator', function() {
+describe('OptionsValidator', () => {
   let toValidate = undefined;
 
   beforeEach(() => toValidate = [{
@@ -26,33 +21,33 @@ describe('OptionsValidator', function() {
     message: 'option has to be of value "yes", "no", or "maybe"'
   }]);
 
-  it('returns an error', function() {
+  it('returns an error', () => {
     const result = validator({ option: 'mybae' }, toValidate);
-    return expect(result).to.deep.equal([{
+    expect(result).to.deep.equal([{
       name: 'option',
       message: 'option has to be of value "yes", "no", or "maybe"'
     }]);
   });
 
-  it('does not return an error', function() {
+  it('does not return an error', () => {
     const result = validator({ option: 'maybe' }, toValidate);
-    return assert(result.length === 0, 'it does not return any errors');
+    assert(result.length === 0, 'it does not return any errors');
   });
 
-  it('does not remove invalid option from object', function() {
+  it('does not remove invalid option from object', () => {
     const options = { option: 'mybae' };
     validator(options, toValidate);
-    return expect(options).to.deep.equal({ option: 'mybae' });
+    expect(options).to.deep.equal({ option: 'mybae' });
   });
 
-  it('does removes invalid option from object', function() {
+  it('does removes invalid option from object', () => {
     const options = { option: 'mybae' };
     validator(options, toValidate, true);
-    return expect(options).to.deep.equal({});
+    expect(options).to.deep.equal({});
   });
 
-  return it('accepts empty options', function() {
+  it('accepts empty options', () => {
     const result = validator({}, toValidate);
-    return assert(result.length === 0, 'it does not return any errors');
+    assert(result.length === 0, 'it does not return any errors');
   });
 });

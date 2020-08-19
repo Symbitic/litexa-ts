@@ -8,7 +8,7 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
-const Generator = require('./generator');
+const Generator = require('./generator').default;
 
 class AssetsDirectoryGenerator extends Generator {
   static initClass() {

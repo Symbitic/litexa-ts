@@ -1,16 +1,16 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const fs = require('fs');
-const path = require('path');
-const mkdirp = require('mkdirp');
-const searchReplace = require('../searchReplace');
-const strategies = require('../../bundlingStrategies');
-require('../../../getter.polyfill');
+import fs from 'fs';
+import path from 'path';
+import mkdirp from 'mkdirp';
+import searchReplace from '../searchReplace';
+import strategies from '../../bundlingStrategies';
+import '../../../getter.polyfill';
 
 class StructureCreator {
   static initClass() {
@@ -69,4 +69,4 @@ class StructureCreator {
 };
 StructureCreator.initClass();
 
-module.exports = StructureCreator;
+export default StructureCreator;

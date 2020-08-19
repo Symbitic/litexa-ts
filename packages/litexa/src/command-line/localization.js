@@ -1,11 +1,19 @@
-const chalk = require('chalk');
-const fs = require('fs');
-const path = require('path');
-const { promisify } = require('util');
+/*
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ */
 
-const LoggingChannel = require('./loggingChannel');
-const projectConfig = require('./project-config');
-const { Skill } = require('../parser/skill');
+import chalk from 'chalk';
+import { writeFile, readFile } from 'fs';
+import { join } from 'path';
+import { promisify } from 'util';
+
+import LoggingChannel from './loggingChannel';
+import { loadConfig } from './project-config';
+import { Skill } from '../parser/skill';
+import ProjectInfo from './project-info';
 
 /* The skill localization object has the following contents:
   {
@@ -33,7 +41,7 @@ const { Skill } = require('../parser/skill');
 */
 
 // Utility function that will crawl Litexa code, to retrieve all intents/utterances and say/reprompts.
-async function localizeSkill(options) {
+export async function localizeSkill(options) {
   options.logger = options.logger || new LoggingChannel({
     logPrefix: 'localization',
     logStream: options.logStream || console,
@@ -68,8 +76,8 @@ async function localizeSkill(options) {
     // 2) Log any orphaned (no longer in skill) utterances and speech lines in red, prefixed with '-'.
     // Persist orphaned content in localization.json unless otherwise specified by --remove flags.
     mergePreviousLocalization(options, prevLocalization, curLocalization);
-    const outputPath = path.join(skill.projectInfo.root, 'localization.json');
-    const promisifiedFileWrite = promisify(fs.writeFile);
+    const outputPath = join(skill.projectInfo.root, 'localization.json');
+    const promisifiedFileWrite = promisify(writeFile);
     await promisifiedFileWrite(outputPath, JSON.stringify(curLocalization, null, 2));
     options.logger.important(`localization summary saved to: ${outputPath}`);
   } catch (err) {
@@ -79,8 +87,8 @@ async function localizeSkill(options) {
 }
 
 async function buildSkill(options, variant = 'development') {
-  const jsonConfig = await projectConfig.loadConfig(options.root);
-  const projectInfo = new (require('./project-info'))({jsonConfig, variant, doNotParseExtensions: options.doNotParseExtensions});
+  const jsonConfig = await loadConfig(options.root);
+  const projectInfo = new ProjectInfo({ jsonConfig, variant, doNotParseExtensions: options.doNotParseExtensions });
 
   const skill = new Skill(projectInfo);
   skill.strictMode = true;
@@ -89,8 +97,8 @@ async function buildSkill(options, variant = 'development') {
     const codeInfo = languageInfo.code;
     const files = codeInfo.files;
     for (const file of files) {
-      const filename = path.join(codeInfo.root, file);
-      const promisifiedFileRead = promisify(fs.readFile);
+      const filename = join(codeInfo.root, file);
+      const promisifiedFileRead = promisify(readFile);
       const data = await promisifiedFileRead(filename, 'utf8');
       skill.setFile(file, language, data);
     }
@@ -362,6 +370,6 @@ function localeSortArray(arr) {
   return result;
 }
 
-module.exports = {
+export default {
   localizeSkill
 }

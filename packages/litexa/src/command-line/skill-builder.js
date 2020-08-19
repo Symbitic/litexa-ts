@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./project-config');
 const parserlib = require('../parser/parserlib');
-const ProjectInfo = require('./project-info');
+const ProjectInfo = require('./project-info').default;
 
 async function build(root, variant) {
   parserlib.__resetLib();

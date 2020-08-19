@@ -6,7 +6,7 @@
  */
 
 const path = require('path');
-const Generator = require('./generator');
+const Generator = require('./generator').default;
 const projectNameValidate = require('./validators/projectNameValidator');
 require('../../getter.polyfill');
 const debug = require('debug')('config-generator');

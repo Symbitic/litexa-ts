@@ -5,7 +5,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const Generator = require('./generator');
+const Generator = require('./generator').default;
 
 class SourceCodeGenerator extends Generator {
   static initClass() {

@@ -5,12 +5,12 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const InlinedStructureCreator = require('./directory/inlinedStructureCreator');
-const SeparateStructureCreator = require('./directory/separateStructureCreator');
-const BundlerStructureCreator = require('./directory/bundlerStructureCreator');
-const strategies = require('../bundlingStrategies');
+import InlinedStructureCreator from './directory/inlinedStructureCreator';
+import SeparateStructureCreator from './directory/separateStructureCreator';
+import BundlerStructureCreator from './directory/bundlerStructureCreator';
+import strategies from '../bundlingStrategies';
 
-class DirectoryCreator {
+export default class DirectoryCreator {
   constructor(args) {
     const strategy = args.bundlingStrategy;
 
@@ -30,5 +30,3 @@ class DirectoryCreator {
     }
   }
 }
-
-module.exports = DirectoryCreator;

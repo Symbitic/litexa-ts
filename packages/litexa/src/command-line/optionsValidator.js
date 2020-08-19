@@ -24,8 +24,7 @@
  *   message : 'my Options has to be "yes" or "no"'
  * }]
  */
-
-function optionsValidator(options, toValidate, removeInvalid) {
+export default function optionsValidator(options, toValidate, removeInvalid) {
   if (!toValidate) {
     toValidate = [];
   }
@@ -50,5 +49,3 @@ function optionsValidator(options, toValidate, removeInvalid) {
   });
   return errors;
 }
-
-module.exports = optionsValidator;

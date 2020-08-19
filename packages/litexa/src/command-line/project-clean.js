@@ -1,20 +1,20 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const fs = require('fs');
-const path = require('path');
-const mkdirp = require('mkdirp');
-const crypto = require('crypto');
-const rimraf = require('rimraf');
-const ProjectConfig = require('./project-config');
+import { createReadStream, readFileSync, writeFileSync } from 'fs';
+import { parse, join } from 'path';
+import { sync } from 'mkdirp';
+import { createHash } from 'crypto';
+import { sync as _sync } from 'rimraf';
+import { identifyConfigFileFromPath } from './project-config';
 
 const createLitexaConfigSHA256 = configFile => new Promise((resolve, reject) => {
-  const shasum = crypto.createHash('sha256');
-  return fs.createReadStream(configFile)
+  const shasum = createHash('sha256');
+  return createReadStream(configFile)
     .on('data', chunk => shasum.update(chunk))
     .on('end', () => resolve(shasum.digest('base64')))
     .on('error', err => reject(err));
@@ -27,33 +27,33 @@ async function run(options) {
   let storedHash = '';
   let litexaProjectRoot = options.root;
   try {
-    const litexaConfigPath = await ProjectConfig.identifyConfigFileFromPath(options.root);
+    const litexaConfigPath = await identifyConfigFileFromPath(options.root);
     currentHash = await createLitexaConfigSHA256(litexaConfigPath);
-    litexaProjectRoot = path.parse(litexaConfigPath).dir;
+    litexaProjectRoot = parse(litexaConfigPath).dir;
     for (let i=0; i<locationsToWipe.length; i++) {
       const location = locationsToWipe[i];
-      locationsToWipe[i] = path.join(litexaProjectRoot, location);
+      locationsToWipe[i] = join(litexaProjectRoot, location);
     }
   } catch (err) {
     // do nothing if we don't have a Litexa config
     return;
   }
 
-  const litexaConfigHash = path.join(litexaProjectRoot, '.deploy', 'litexaConfig.hash');
+  const litexaConfigHash = join(litexaProjectRoot, '.deploy', 'litexaConfig.hash');
   try {
-    storedHash = fs.readFileSync(litexaConfigHash, 'utf8');
+    storedHash = readFileSync(litexaConfigHash, 'utf8');
   } catch (err) {}
 
   if (currentHash !== storedHash) {
     for (let location of locationsToWipe) {
-      rimraf.sync(location);
+      _sync(location);
     }
   }
-  mkdirp.sync(path.join(litexaProjectRoot, '.deploy'));
+  sync(join(litexaProjectRoot, '.deploy'));
 
-  fs.writeFileSync(litexaConfigHash, currentHash, 'utf8');
+  writeFileSync(litexaConfigHash, currentHash, 'utf8');
 };
 
-module.exports = {
+export default {
   run
 };

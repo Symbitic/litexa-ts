@@ -1,39 +1,31 @@
 /*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-/*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const {assert, expect} = require('chai');
-const {match, spy, stub} = require('sinon');
+import { assert, expect } from 'chai';
+import { stub } from 'sinon';
+import { existsSync } from 'fs';
+import { sync } from 'rimraf';
 
-const path = require('path');
-const fs = require('fs');
-const rimraf = require('rimraf');
-const mkdirp = require('mkdirp');
+import SourceCodeGenerator from '../../../../src/command-line/generators/sourceCodeGenerator';
 
-const SourceCodeGenerator = require('@src/command-line/generators/sourceCodeGenerator');
+import { MockProjectInfoInterface, MockFileHandlerInterface, MockDirectoryCreatorInterface } from '../../../helpers';
 
-const Test = require('@test/helpers');
-
-describe('SourceCodeGenerator', function() {
-  describe('#description', () => it('has a class property to describe itself', function() {
+describe('SourceCodeGenerator', () => {
+  describe('#description', () => it('has a class property to describe itself', () => {
     assert(SourceCodeGenerator.hasOwnProperty('description'), 'has a property description');
-    return expect(SourceCodeGenerator.description).to.equal('litexa entry point');
+    expect(SourceCodeGenerator.description).to.equal('litexa entry point');
   }));
 
-  describe('generate', function() {
+  describe('generate', () => {
     let options = undefined;
     let loggerInterface = undefined;
     let mockLanguage = undefined;
 
-    beforeEach(function() {
+    beforeEach(() => {
       options = {
         root: '.',
         configLanguage: 'javascript',
@@ -55,19 +47,19 @@ describe('SourceCodeGenerator', function() {
 
     afterEach(function() {
       const dir = 'litexa';
-      if (fs.existsSync(dir)) {
-        return rimraf.sync(dir);
+      if (existsSync(dir)) {
+        return sync(dir);
       }
     });
 
-    it('returns a promise', function() {
+    it('returns a promise', () => {
       //const hasCodeStub = stub(SourceCodeGenerator.prototype, '_hasLitexaCode').returns(true);
       const sourceCodeGenerator = new SourceCodeGenerator({
         options,
         logger: loggerInterface,
-        projectInfoClass: Test.MockProjectInfoInterface,
-        templateFilesHandlerClass: Test.MockFileHandlerInterface,
-        directoryCreatorClass: Test.MockDirectoryCreatorInterface
+        projectInfoClass: MockProjectInfoInterface,
+        templateFilesHandlerClass: MockFileHandlerInterface,
+        directoryCreatorClass: MockDirectoryCreatorInterface
       });
       const hasCodeStub = stub(sourceCodeGenerator, '_hasLitexaCode').returns(true);
       assert.typeOf(sourceCodeGenerator.generate(), 'promise', 'it returns a promise');
@@ -75,7 +67,7 @@ describe('SourceCodeGenerator', function() {
     });
 
     /*
-    it('creates the directory structure', function() {
+    it('creates the directory structure', () => {
       const hasCodeStub = stub(SourceCodeGenerator.prototype, '_hasLitexaCode').returns(true);
       const createSpy = spy(Test.MockDirectoryCreator.prototype, 'create');
 
@@ -94,7 +86,7 @@ describe('SourceCodeGenerator', function() {
     */
 
     /*
-    return it('synchronizes the directory if no litexa code exists', function() {
+    return it('synchronizes the directory if no litexa code exists', () => {
       const hasCodeStub = stub(SourceCodeGenerator.prototype, '_hasLitexaCode').returns(false);
       const logSpy = spy(loggerInterface, 'log');
       const syncSpy = spy(Test.MockDirectoryCreator.prototype, 'sync');

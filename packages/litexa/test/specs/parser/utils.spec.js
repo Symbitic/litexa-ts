@@ -1,15 +1,14 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const Utils = require('@src/parser/utils').lib;
-const { assert, expect } = require('chai');
+import { lib as Utils } from '../../../src/parser/utils';
+import { assert, expect } from 'chai';
 
 describe('performs string manipulation and checking functions', () => {
-
   it('trims line breaks', () => {
     expect(Utils.replaceNewlineCharacters(null)).to.equal('');
     expect(Utils.replaceNewlineCharacters('hello\nmy name is Ellie', ', ')).to.equal('hello, my name is Ellie');

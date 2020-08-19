@@ -5,8 +5,8 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const chalk = require('chalk');
-const skillBuilder = require('./skill-builder');
+import chalk from 'chalk';
+import { build } from './skill-builder';
 
 async function run(options, after) {
   const logger = options.logger ? options.logger : console;
@@ -23,7 +23,7 @@ async function run(options, after) {
   };
 
   try {
-    const skill = await skillBuilder.build(options.root, options.deployment);
+    const skill = await build(options.root, options.deployment);
     switch (options.type) {
       case 'model':
         const model = skill.toModelV2(options.region != null ? options.region : 'default');
@@ -39,6 +39,6 @@ async function run(options, after) {
   }
 };
 
-module.exports = {
+export default {
   run
 };

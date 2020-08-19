@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-function skillStoreTitleValidator(proposedName) {
+export default function skillStoreTitleValidator(proposedName) {
   if (!proposedName) {
     throw new Error('Your skill store title cannot be empty.');
   }
@@ -24,5 +24,3 @@ function skillStoreTitleValidator(proposedName) {
 
   return true;
 }
-
-module.exports = skillStoreTitleValidator;

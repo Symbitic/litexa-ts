@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-module.exports = {
+export default {
   'webpack': 'bundled',
   'npm-link': 'separate',
   'none': 'inlined'

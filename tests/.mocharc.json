@@ -2,6 +2,7 @@
   "full-trace": true,
   "require": [
     "coffeescript/register",
+    "esm",
     "./preamble.js"
   ],
   "timeout": 20000,

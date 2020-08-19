@@ -1,32 +1,26 @@
 /*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-/*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const {assert, expect} = require('chai');
-const {match, spy, stub} = require('sinon');
+import { assert, expect } from 'chai';
+import { match, spy, stub } from 'sinon';
+import { existsSync } from 'fs';
+import { sync } from 'mkdirp';
+import { join } from 'path';
+import { sync as _sync } from 'rimraf';
 
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const path = require('path');
-const rimraf = require('rimraf');
+import SkillIconsGenerator from '../../../../src/command-line/generators/skillIconsGenerator';
 
-const SkillIconsGenerator = require('@src/command-line/generators/skillIconsGenerator');
-
-describe('SkillIconsGenerator', function() {
-  describe('#description', () => it('has a class property to describe itself', function() {
+describe('SkillIconsGenerator', () => {
+  describe('#description', () => it('has a class property to describe itself', () => {
     assert(SkillIconsGenerator.hasOwnProperty('description'), 'has a property description');
-    return expect(SkillIconsGenerator.description).to.equal('skill icons');
+    expect(SkillIconsGenerator.description).to.equal('skill icons');
   }));
 
-  return describe('#generate', function() {
+  describe('#generate', () => {
     let loggerInterface = undefined;
     let options = undefined;
 
@@ -37,21 +31,21 @@ describe('SkillIconsGenerator', function() {
       loggerInterface = {
         log() { return undefined; }
       };
-      return mkdirp.sync(path.join('litexa', 'assets'));
+      sync(join('litexa', 'assets'));
     });
 
-    afterEach(() => rimraf.sync(path.join('litexa', 'assets')));
+    afterEach(() => _sync(join('litexa', 'assets')));
 
-    it('returns a promise', function() {
+    it('returns a promise', () => {
       const skillIconsGenerator = new SkillIconsGenerator({
         options,
         logger: loggerInterface
       });
 
-      return assert.typeOf(skillIconsGenerator.generate(), 'promise', 'returns a promise');
+      assert.typeOf(skillIconsGenerator.generate(), 'promise', 'returns a promise');
     });
 
-    it('calls to create 108 and 512 sized icons', function() {
+    it('calls to create 108 and 512 sized icons', () => {
       const iconStub = stub(SkillIconsGenerator.prototype, '_ensureIcon').callsFake(() => undefined);
       const skillIconsGenerator = new SkillIconsGenerator({
         options,
@@ -66,7 +60,7 @@ describe('SkillIconsGenerator', function() {
     });
 
 
-    it('wrote both files', function() {
+    it('wrote both files', () => {
       const skillIconsGenerator = new SkillIconsGenerator({
         options,
         logger: loggerInterface
@@ -74,11 +68,11 @@ describe('SkillIconsGenerator', function() {
 
       skillIconsGenerator.generate();
 
-      assert(fs.existsSync(path.join('litexa', 'assets', 'icon-108.png')), 'wrote the 108 sized icon');
-      return assert(fs.existsSync(path.join('litexa', 'assets', 'icon-512.png')), 'wrote the 512 sized icon');
+      assert(existsSync(join('litexa', 'assets', 'icon-108.png')), 'wrote the 108 sized icon');
+      assert(existsSync(join('litexa', 'assets', 'icon-512.png')), 'wrote the 512 sized icon');
     });
 
-    return it('indicates they already exist if they already exist', function() {
+    it('indicates they already exist if they already exist', () => {
       const logSpy = spy(loggerInterface, 'log');
 
       const skillIconsGenerator = new SkillIconsGenerator({
@@ -89,7 +83,7 @@ describe('SkillIconsGenerator', function() {
       skillIconsGenerator.generate();
       skillIconsGenerator.generate();
 
-      return assert(logSpy.calledWith(match('found -> skipping creation')),
+      assert(logSpy.calledWith(match('found -> skipping creation')),
         'indicated that the file already existed');
     });
   });

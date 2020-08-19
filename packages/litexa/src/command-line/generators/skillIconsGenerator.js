@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const { PNG } = require('pngjs');
-const Generator = require('./generator');
+const Generator = require('./generator').default;
 const debug = require('debug')('litexa');
 
 class SkillIconsGenerator extends Generator {

@@ -7,7 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const Generator = require('./generator');
+const Generator = require('./generator').default;
 
 const currentTime = () => (new Date).getTime();
 
