@@ -9,7 +9,7 @@ assert = require 'assert'
 debug = require('debug')('says')
 path = require 'path'
 parser = require '@litexa/core/src/parser/parser'
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
 { VariableScopeManager } = require '@litexa/core/src/parser/variableScope'
 

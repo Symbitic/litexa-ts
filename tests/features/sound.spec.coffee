@@ -7,7 +7,7 @@
 
 assert = require 'assert'
 debug = require('debug')('litexa')
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
 describe 'supports the playMusic and stopMusic statements', ->
   it 'runs the sound integration test', ->

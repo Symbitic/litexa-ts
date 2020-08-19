@@ -9,6 +9,6 @@ assert = require 'assert'
 debug = require('debug')('litexa')
 preamble = require '../preamble'
 
-describe 'supports async functions', ->
-  it 'runs the async-functions integration test', ->
-    preamble.runSkill 'async-functions'
+describe 'supports function calls', ->
+  it 'runs the function-calls integration test', ->
+    preamble.runSkill 'function-calls'

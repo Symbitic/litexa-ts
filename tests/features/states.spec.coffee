@@ -6,7 +6,7 @@
 ###
 
 assert = require 'assert'
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
 { expectParse, expectFailParse } = preamble
 

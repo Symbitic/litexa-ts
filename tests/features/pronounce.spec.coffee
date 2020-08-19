@@ -1,4 +1,4 @@
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
 describe 'supports pronounce skill', ->
   it 'runs the pronounce integration test', ->

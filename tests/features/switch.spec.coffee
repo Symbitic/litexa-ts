@@ -7,7 +7,7 @@
 
 assert = require 'assert'
 debug = require('debug')('litexa')
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
 describe 'supports switch statements', ->
   it 'runs the switch integration test', ->

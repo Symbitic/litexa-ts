@@ -5,7 +5,7 @@
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ###
 
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
 describe 'supports request variables', ->
   it 'runs the request variables integration test', ->

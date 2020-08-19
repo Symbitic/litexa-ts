@@ -7,7 +7,7 @@
 
 assert = require 'assert'
 debug = require('debug')('litexa')
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
 describe 'supports Tag Testing skill', ->
   it 'runs the tag-test integration test', ->

@@ -7,7 +7,7 @@
 
 assert = require 'assert'
 debug = require('debug')('litexa')
-{runSkill, expectParse, expectFailParse, buildSkillModel} = require '../preamble.coffee'
+{ runSkill, expectParse, expectFailParse, buildSkillModel } = require '../preamble'
 
 describe 'supports intent statements', ->
   it 'runs the intents integration test', ->
@@ -252,7 +252,7 @@ describe 'supports intent statements', ->
     global
       when AMAZON.YesIntent
         say "hello"
-      
+
       when AMAZON.YesIntent
         or AMAZON.NextIntent
         say "hi"
@@ -263,7 +263,7 @@ describe 'supports intent statements', ->
     global
       when AMAZON.YesIntent
         say "hello"
-      
+
       when AMAZON.NextIntent
         or AMAZON.YesIntent
         say "hi"
@@ -325,15 +325,14 @@ describe 'supports intent statements', ->
 
       when "meow"
         or AMAZON.YesIntent
-      
+
       when AMAZON.RepeatIntent
         or "rephrase that"
     """
-  
+
   it 'creates a skill model that includes child intents of multi-intent handlers', ->
     model = await buildSkillModel 'intents'
     intents = model.languageModel.intents.map (intent) -> intent.name
     assert("PreviouslyNotDefinedIntentName" in intents, 'PreviouslyNotDefinedIntentName exists in model')
     assert("AMAZON.NoIntent" in intents, 'AMAZON.NoIntent exists in model')
     assert("OtherIntentName" in intents, 'OtherIntentName exists in model')
-    

@@ -95,7 +95,7 @@ describe('localization command', () => {
 
     // This is the line that is always timing out.
     it('added a say line', async () => {
-      const skillCode = [...litexaContent];
+      const skillCode = [ ...litexaContent ];
       skillCode.push('  say "say line 4."');
       fs.writeFileSync(path.join(options.root, 'litexa', 'main.litexa'), skillCode.join('\n'));
       options = createOptionsObject();

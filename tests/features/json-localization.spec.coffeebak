@@ -7,8 +7,8 @@
 
 assert = require 'assert'
 debug = require('debug')('litexa')
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
-describe 'supports lexical scoping', ->
-  it 'runs the lexical-scoping integration test', ->
-    preamble.runSkill 'lexical-scoping'
+describe 'supports the JSON localization feature', ->
+  it 'runs the json-localization integration test', ->
+    preamble.runSkill 'json-localization'

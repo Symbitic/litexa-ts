@@ -5,8 +5,10 @@
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ###
 
-preamble = require '../preamble.coffee'
+assert = require 'assert'
+debug = require('debug')('litexa')
+preamble = require '../preamble'
 
-describe 'supports the @litexa/html extension', ->
-  it 'runs the html-extension integration test', ->
-    preamble.runSkill 'html-extension'
+describe 'supports lexical scoping', ->
+  it 'runs the lexical-scoping integration test', ->
+    preamble.runSkill 'lexical-scoping'

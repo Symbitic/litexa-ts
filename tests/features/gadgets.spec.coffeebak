@@ -7,8 +7,8 @@
 
 assert = require 'assert'
 debug = require('debug')('litexa')
-preamble = require '../preamble.coffee'
+preamble = require '../preamble'
 
-describe 'supports extensions', ->
-  it 'supports various extension architectures', ->
-    preamble.runSkill 'extensions'
+describe 'supports the gadgets API', ->
+  it 'runs the gadgets-api integration test', ->
+    preamble.runSkill 'gadgets'

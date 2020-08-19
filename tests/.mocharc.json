@@ -2,7 +2,7 @@
   "full-trace": true,
   "require": [
     "coffeescript/register",
-    "./preamble.coffee"
+    "./preamble.js"
   ],
   "timeout": 20000,
   "watch-extensions": ["coffee"]

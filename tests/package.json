@@ -6,7 +6,7 @@
     "build": "npm run clean && npm install",
     "clean": "npx rimraf node_modules",
     "coverage": "npx nyc npm test && node ../cacheCoverage.js",
-    "test": "npx mocha './features/*.spec.coffee'",
+    "test": "npx mocha './features/*.spec.{coffee,js,ts}'",
     "test:file": "npx mocha"
   },
   "author": "Amazon",
