@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-exports.createDefault = () => ({
+export const createDefault = () => ({
   skillManifest: {
     manifestVersion: '1.0',
     publishingInformation: {

@@ -33,7 +33,7 @@ const resetLib = function() {
   mergeLib(require('./variableReference'));
   mergeLib(require('./say'));
   mergeLib(require('./card'));
-  mergeLib(require('./function'));
+  mergeLib(require('./function').default);
   mergeLib(require('./assets'));
   mergeLib(require('./soundEffect'));
   mergeLib(require('./intent'));

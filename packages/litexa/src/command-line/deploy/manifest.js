@@ -5,11 +5,11 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const fs = require('fs');
-const path = require('path');
-const util = require('util');
-const smapi = require('../api/smapi');
-const { JSONValidator } = require('../../parser/jsonValidator');
+import fs from 'fs';
+import path from 'path';
+import util from 'util';
+import smapi from '../api/smapi';
+import { JSONValidator } from '../../parser/jsonValidator';
 
 const writeFile = util.promisify(fs.writeFile);
 
@@ -727,7 +727,7 @@ function enableSkill(context, manifestContext) {
     .catch(err => Promise.reject(err));
 };
 
-async function deploy(context, overrideLogger) {
+export async function deploy(context, overrideLogger) {
   logger = overrideLogger;
 
   askProfile = context.deploymentOptions && context.deploymentOptions.askProfile;
@@ -756,13 +756,14 @@ async function deploy(context, overrideLogger) {
   }
 }
 
-module.exports = {
-  deploy,
-  testing: {
-    getManifestFromSkillInfo
-  }
+export const testing = {
+  getManifestFromSkillInfo
 };
 
+export default {
+  deploy,
+  testing
+};
 
 function __guard__(value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;

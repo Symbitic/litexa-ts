@@ -15,15 +15,15 @@
  *
  * Note: the project name is assumed to be the same as the
  * directory name, unless explicitly specified in the config file.
-*/
+ */
 
 const fs = require('fs');
 const path = require('path');
 const debug = require('debug');
 const { promisify } = require('util');
 const extensions = require('./fileExtensions').default;
-const searchReplace = require('./generators/searchReplace');
-const projectNameValidate = require('./generators/validators/projectNameValidator');
+const searchReplace = require('./generators/searchReplace').default;
+const projectNameValidate = require('./generators/validators/projectNameValidator').default;
 const ts = require('typescript');
 
 const litexaDebug = debug('litexa');

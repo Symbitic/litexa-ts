@@ -1,15 +1,15 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const Generator = require('./generator').default;
+import Generator from './generator';
 
-class SourceCodeGenerator extends Generator {
-  static initClass() {
-    this.description = 'litexa entry point';
+export default class SourceCodeGenerator extends Generator {
+  static description() {
+    return 'litexa entry point';
   }
 
   constructor(args) {
@@ -74,6 +74,3 @@ class SourceCodeGenerator extends Generator {
     return this.language = this.options.sourceLanguage;
   }
 }
-SourceCodeGenerator.initClass();
-
-module.exports = SourceCodeGenerator;

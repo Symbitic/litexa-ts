@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
-const inquirer = require('inquirer');
+import inquirer from 'inquirer';
 
 // Function to check and handle major/minor mismatch between last deployed @litexa/core
 // version and currently installed version.
-async function validateCoreVersion({ prevCoreVersion, curCoreVersion, inputHandler }) {
+export async function validateCoreVersion({ prevCoreVersion, curCoreVersion, inputHandler }) {
   const { prompt } = inputHandler ? inputHandler : inquirer;
   // if this is the first deployment, there's nothing to validate
   if (prevCoreVersion == null) {
@@ -54,6 +54,6 @@ async function validateCoreVersion({ prevCoreVersion, curCoreVersion, inputHandl
   return result.proceed;
 }
 
-module.exports = {
+export default {
   validateCoreVersion
 };

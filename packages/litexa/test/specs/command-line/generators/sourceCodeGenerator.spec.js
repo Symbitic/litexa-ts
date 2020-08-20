@@ -17,7 +17,7 @@ import { MockProjectInfoInterface, MockFileHandlerInterface, MockDirectoryCreato
 describe('SourceCodeGenerator', () => {
   describe('#description', () => it('has a class property to describe itself', () => {
     assert(SourceCodeGenerator.hasOwnProperty('description'), 'has a property description');
-    expect(SourceCodeGenerator.description).to.equal('litexa entry point');
+    expect(SourceCodeGenerator.description()).to.equal('litexa entry point');
   }));
 
   describe('generate', () => {

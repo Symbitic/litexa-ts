@@ -1,17 +1,17 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const fs = require('fs');
-const path = require('path');
-const util = require('util');
+import { readFile, writeFileSync } from 'fs';
+import { join } from 'path';
+import { promisify } from 'util';
 
-const readFilePromise = util.promisify(fs.readFile);
+const readFilePromise = promisify(readFile);
 
-class Artifacts {
+export class Artifacts {
   constructor(filename, data) {
     this.filename = filename;
     this.data = data;
@@ -63,7 +63,7 @@ class Artifacts {
 
   flush() {
     if (this.filename) {
-      fs.writeFileSync(this.filename, JSON.stringify(this.data, null, 2), 'utf8');
+      writeFileSync(this.filename, JSON.stringify(this.data, null, 2), 'utf8');
     }
   }
 
@@ -75,8 +75,8 @@ class Artifacts {
   }
 }
 
-function loadArtifacts({ context, logger }) {
-  const filename = path.join(context.projectRoot, 'artifacts.json');
+export function loadArtifacts({ context, logger }) {
+  const filename = join(context.projectRoot, 'artifacts.json');
   return readFilePromise(filename, 'utf8')
   .catch(err => {
     if (err.code === 'ENOENT') {
@@ -93,7 +93,7 @@ function loadArtifacts({ context, logger }) {
   });
 };
 
-module.exports = {
+export default {
   Artifacts,
   loadArtifacts
 };

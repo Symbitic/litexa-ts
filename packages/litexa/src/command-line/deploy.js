@@ -1,26 +1,22 @@
 /*
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright 2019 Amazon.com (http://amazon.com/), Inc. or its affiliates. All Rights Reserved.
- * These materials are licensed as "Restricted Program Materials" under the Program Materials
- * License Agreement (the "Agreement") in connection with the Amazon Alexa voice service.
- * The Agreement is available at https://developer.amazon.com/public/support/pml.html.
- * See the Agreement for the specific terms and conditions of the Agreement. Capitalized
- * terms not defined in this file have the meanings given to them in the Agreement.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const mkdirp = require('mkdirp');
-const path = require('path');
-const LoggingChannel = require('./loggingChannel');
-const skillBuilder = require('./skill-builder');
-const deploymentModule = require('../deployment/deployment-module');
-const deploymentManifest = require('./deploy/manifest');
-const { JSONValidator } = require('../parser/jsonValidator');
-const { loadArtifacts } = require('../deployment/artifacts');
-const { getCurrentState } = require('../deployment/git');
-const { convertAssets } = require('../deployment/assets');
-const { formatLocationStart } = require('../parser/errors');
-const { validateCoreVersion } = require('./deploy/validators');
+import { sync } from 'mkdirp';
+import { join } from 'path';
+import LoggingChannel from './loggingChannel';
+import { build } from './skill-builder';
+import deploymentModule from '../deployment/deployment-module';
+import deploymentManifest from './deploy/manifest';
+import { JSONValidator } from '../parser/jsonValidator';
+import { loadArtifacts } from '../deployment/artifacts';
+import { getCurrentState } from '../deployment/git';
+import { convertAssets } from '../deployment/assets';
+import { formatLocationStart } from '../parser/errors';
+import { validateCoreVersion } from './deploy/validators';
 
 function parseDeploymentTypes(options) {
   const optionTypes = options.type.split(',').map(d => d.trim());
@@ -47,7 +43,7 @@ function parseDeploymentTypes(options) {
   return deploymentTypes;
 };
 
-async function run(options) {
+export async function run(options) {
   let context, deploymentStartTime, deploymentTypes, deployModule, deployRoot, skill;
   const logStream = options.logger ? options.logger : console;
   const verbose = options.verbose ? options.verbose : false;
@@ -62,15 +58,15 @@ async function run(options) {
     deploymentStartTime = new Date;
 
     // ok, load skill
-    skill = await skillBuilder.build(options.root, options.deployment);
+    skill = await build(options.root, options.deployment);
     options.deployment = options.deployment ? options.deployment : 'development';
     skill.projectInfo.variant = options.deployment;
 
     // deployment artifacts live in this temp directory
-    deployRoot = path.join(skill.projectInfo.root, '.deploy', skill.projectInfo.variant);
-    mkdirp.sync(deployRoot);
+    deployRoot = join(skill.projectInfo.root, '.deploy', skill.projectInfo.variant);
+    sync(deployRoot);
 
-    logger.filename = path.join(deployRoot, 'deploy.log');
+    logger.filename = join(deployRoot, 'deploy.log');
 
     // couldn't log this until now, but it's close enough
     logger.log(`skill build complete in ${(new Date) - deploymentStartTime}ms`);
@@ -102,7 +98,7 @@ async function run(options) {
       projectConfig: skill.projectInfo,
       deployRoot,
       projectRoot: (skill.projectInfo != null ? skill.projectInfo.root : undefined),
-      sharedDeployRoot: path.join(skill.projectInfo.root, '.deploy'),
+      sharedDeployRoot: join(skill.projectInfo.root, '.deploy'),
       cache: options.cache,
       deploymentName: options.deployment,
       deploymentOptions: skill.projectInfo.deployments[options.deployment],
@@ -144,7 +140,7 @@ async function run(options) {
       const assetsLogger = new LoggingChannel({
         logPrefix: 'assets',
         logStream,
-        logFile: path.join(deployRoot, 'assets.log'),
+        logFile: join(deployRoot, 'assets.log'),
         verbose
       });
       const assetsPipeline = Promise.resolve()
@@ -158,7 +154,7 @@ async function run(options) {
       const lambdaLogger = new LoggingChannel({
         logPrefix: 'lambda',
         logStream,
-        logFile: path.join(deployRoot, 'lambda.log'),
+        logFile: join(deployRoot, 'lambda.log'),
         verbose
       });
       steps.push(deployModule.lambda.deploy(context, lambdaLogger));
@@ -170,7 +166,7 @@ async function run(options) {
       const lambdaLogger = new LoggingChannel({
         logPrefix: 'manifest',
         logStream,
-        logFile: path.join(deployRoot, 'manifest.log'),
+        logFile: join(deployRoot, 'manifest.log'),
         verbose
       });
       await deployModule.manifest.deploy(context, lambdaLogger);
@@ -199,6 +195,6 @@ async function run(options) {
   }
 };
 
-module.exports = {
+export default {
   run
 };

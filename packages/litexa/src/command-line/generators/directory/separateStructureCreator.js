@@ -5,9 +5,9 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const path = require('path');
-const StructureCreator = require('./structureCreator').default;
-require('../../../getter.polyfill');
+import { join } from 'path';
+import StructureCreator from './structureCreator';
+import '../../../getter.polyfill';
 
 /*
 * Directory Structure
@@ -52,7 +52,7 @@ class SeparateStructureCreator extends StructureCreator {
 
     this.getter('separateFolder', function () {
       if (this.separateDir) { return this.separateDir; }
-      return this.separateDir = path.join(this.rootPath, separateFolder);
+      return this.separateDir = join(this.rootPath, separateFolder);
     });
   }
 
@@ -136,4 +136,4 @@ class SeparateStructureCreator extends StructureCreator {
 };
 SeparateStructureCreator.initClass();
 
-module.exports = SeparateStructureCreator;
+export default SeparateStructureCreator;

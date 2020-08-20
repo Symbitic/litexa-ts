@@ -1,8 +1,8 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
 function searchReplace(stringTemplate, templateValues) {
@@ -16,4 +16,4 @@ function searchReplace(stringTemplate, templateValues) {
   return data;
 };
 
-module.exports = searchReplace;
+export default searchReplace;

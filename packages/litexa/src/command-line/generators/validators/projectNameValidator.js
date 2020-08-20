@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-function projectNameValidator(proposedName) {
+export default function projectNameValidator(proposedName) {
   if (proposedName.length < 5) {
     throw new Error('A project name should be at least 5 characters.');
   }
@@ -18,5 +18,3 @@ function projectNameValidator(proposedName) {
 
   return true;
 }
-
-module.exports = projectNameValidator;

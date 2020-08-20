@@ -1,23 +1,25 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const path = require('path');
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const debug = require('debug')('litexa-assets');
+import { join } from 'path';
+import { readdirSync, existsSync, copyFileSync } from 'fs';
+import { sync } from 'mkdirp';
+import debug from 'debug';
 
-async function convertAssets(context, logger) {
-  const cacheRoot = path.join(context.sharedDeployRoot, 'converted-assets');
-  debug(`assets conversion cache at ${cacheRoot}`);
+const litexaDebug = debug('litexa-assets');
+
+export async function convertAssets(context, logger) {
+  const cacheRoot = join(context.sharedDeployRoot, 'converted-assets');
+  litexaDebug(`assets conversion cache at ${cacheRoot}`);
 
   for (let languageName in context.projectInfo.languages) {
     const languageInfo = context.projectInfo.languages[languageName];
-    const languageCacheDir = path.join(cacheRoot, languageName);
-    mkdirp.sync(languageCacheDir);
+    const languageCacheDir = join(cacheRoot, languageName);
+    sync(languageCacheDir);
 
     // Add promises to run all of our asset processors.
     for (let kind in languageInfo.assetProcessors) {
@@ -38,23 +40,23 @@ async function convertAssets(context, logger) {
 
   // Now, let's check if there were any "default" converted files that aren't available in a
   // localized language. If so, copy these common assets to the language for deployment.
-  const defaultCacheDir = path.join(cacheRoot, 'default');
+  const defaultCacheDir = join(cacheRoot, 'default');
 
   for (let languageName in context.projectInfo.languages) {
     if (languageName !== 'default') {
-      const languageCacheDir = path.join(cacheRoot, languageName);
-      const defaultFiles = fs.readdirSync(defaultCacheDir);
+      const languageCacheDir = join(cacheRoot, languageName);
+      const defaultFiles = readdirSync(defaultCacheDir);
       for (let fileName of defaultFiles) {
-        const dst = path.join(languageCacheDir, fileName);
-        if (!fs.existsSync(dst)) {
-          const src = path.join(defaultCacheDir, fileName);
-          fs.copyFileSync(src, dst)
+        const dst = join(languageCacheDir, fileName);
+        if (!existsSync(dst)) {
+          const src = join(defaultCacheDir, fileName);
+          copyFileSync(src, dst)
         }
       }
     }
   }
 };
 
-module.exports = {
+export default {
   convertAssets
 };

@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const path = require('path');
-const rimraf = require('rimraf');
-const { loadArtifacts } = require('../deployment/artifacts');
-const skillBuilder = require('./skill-builder');
-const smapi = require('./api/smapi');
-const LoggingChannel = require('./loggingChannel');
+import fs from 'fs';
+import mkdirp from 'mkdirp';
+import path from 'path';
+import rimraf from 'rimraf';
+import { loadArtifacts } from '../deployment/artifacts';
+import skillBuilder from './skill-builder';
+import smapi from './api/smapi';
+import LoggingChannel from './loggingChannel';
 
 /*
  * Utility for running ISP-related Litexa CLI commands, which query @smapi via the ASK CLI.
@@ -20,7 +20,7 @@ const LoggingChannel = require('./loggingChannel');
  *   @param root  ... directory where to search for Litexa project
  *   @param stage ... deployment stage to use
  */
-module.exports = {
+export default {
   async init(args) {
     this.logger = new LoggingChannel({
       logPrefix: 'isp',

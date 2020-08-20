@@ -9,24 +9,11 @@ import { expect } from 'chai';
 import { assert, match, stub } from 'sinon';
 
 import { Artifacts } from '../../../src/deployment/artifacts';
-import {
-  artifacts as _artifacts,
-  skillId as _skillId,
-  init,
-  smapi,
-  listContainsProduct,
-  pullRemoteProductList,
-  stage as _stage,
-  getProductDefinition,
-  createRemoteProduct,
-  updateRemoteProduct,
-  deleteRemoteProduct,
-  associateProduct
-} from '../../../src/command-line/isp';
+import isp from '../../../src/command-line/isp';
 
 describe('ISP', () => {
-  _artifacts = undefined;
-  _skillId = undefined;
+  isp.artifacts = undefined;
+  isp.skillId = undefined;
   let mockArtifactSummary = undefined;
   let mockProduct = undefined;
   let smapiStub = undefined;
@@ -41,7 +28,7 @@ describe('ISP', () => {
     mockArtifacts.setVariant('development');
     mockArtifacts.save('monetization', {});
 
-    init({
+    isp.init({
       artifacts: mockArtifacts,
       logger: { log() { return undefined; } },
       root: '.',
@@ -56,7 +43,7 @@ describe('ISP', () => {
     };
 
     const fakeSmapiCall = args => Promise.resolve('{}');
-    smapiStub = stub(smapi, 'call').callsFake(fakeSmapiCall);
+    smapiStub = stub(isp.smapi, 'call').callsFake(fakeSmapiCall);
   });
 
   afterEach(() => smapiStub.restore());
@@ -67,48 +54,48 @@ describe('ISP', () => {
         productId: 'otherId'
       }
     ];
-    expect(listContainsProduct(mockList, mockProduct)).to.be.false;
+    expect(isp.listContainsProduct(mockList, mockProduct)).to.be.false;
 
     mockList.push({
       productId: 'mockProductId'
     });
-    expect(listContainsProduct(mockList, mockProduct)).to.be.true;
+    expect(isp.listContainsProduct(mockList, mockProduct)).to.be.true;
   });
 
   it('provides correct CLI args for pulling a list of remote products', async () => {
-    await pullRemoteProductList(mockProduct, mockArtifactSummary);
+    await isp.pullRemoteProductList(mockProduct, mockArtifactSummary);
 
     expect(smapiStub.callCount).to.equal(1);
     assert.calledWithMatch(smapiStub, {
       command: 'list-isp-for-skill',
       params: {
-        'skill-id': _skillId,
-        'stage': _stage
+        'skill-id': isp.skillId,
+        'stage': isp.stage
       }
     });
   });
 
   it('provides correct CLI args for retrieving definition for a product', async () => {
-    await getProductDefinition(mockProduct);
+    await isp.getProductDefinition(mockProduct);
 
     expect(smapiStub.callCount).to.equal(1);
     return assert.calledWithMatch(smapiStub, {
       command: 'get-isp',
       params: {
         'isp-id': mockProduct.productId,
-        'stage': _stage
+        'stage': isp.stage
       }
     });
   });
 
   it('provides correct CLI args for creating a remote product', async () => {
-    _artifacts.save('monetization', {
+    isp.artifacts.save('monetization', {
       mockReferenceName: {
         productId: 'mockProductId'
       }
     });
 
-    await createRemoteProduct(mockProduct, mockArtifactSummary);
+    await isp.createRemoteProduct(mockProduct, mockArtifactSummary);
 
     expect(smapiStub.callCount).to.equal(2);
     assert.calledWithMatch(smapiStub.firstCall, {
@@ -122,19 +109,19 @@ describe('ISP', () => {
       command: 'associate-isp',
       params: {
         'isp-id': mockProduct.productId,
-        'skill-id': _skillId
+        'skill-id': isp.skillId
       }
     });
   });
 
   it('provides correct CLI args for updating a remote product', async () => {
-    _artifacts.save('monetization', {
+    isp.artifacts.save('monetization', {
       mockReferenceName: {
         productId: 'mockProductId'
       }
     });
 
-    await updateRemoteProduct(mockProduct, mockArtifactSummary);
+    await isp.updateRemoteProduct(mockProduct, mockArtifactSummary);
 
     expect(smapiStub.callCount).to.equal(1);
     assert.calledWithMatch(smapiStub, {
@@ -142,7 +129,7 @@ describe('ISP', () => {
       params: {
         'isp-id': mockProduct.productId,
         file: mockProduct.filePath,
-        stage: _stage
+        stage: isp.stage
       }
     });
 
@@ -154,14 +141,14 @@ describe('ISP', () => {
   });
 
   it('provides correct CLI args for disassociating and deleting a remote product', async () => {
-    await deleteRemoteProduct(mockProduct);
+    await isp.deleteRemoteProduct(mockProduct);
 
     expect(smapiStub.callCount).to.equal(2);
     assert.calledWithMatch(smapiStub.firstCall, {
       command: 'disassociate-isp',
       params: {
         'isp-id': mockProduct.productId,
-        'skill-id': _skillId
+        'skill-id': isp.skillId
       }
     });
 
@@ -169,20 +156,20 @@ describe('ISP', () => {
       command: 'delete-isp',
       params: {
         'isp-id': mockProduct.productId,
-        stage: _stage
+        stage: isp.stage
       }
     });
   });
 
   it('provides correct CLI args for associating a product', async () => {
-    await associateProduct(mockProduct);
+    await isp.associateProduct(mockProduct);
 
     expect(smapiStub.callCount).to.equal(1);
     assert.calledWithMatch(smapiStub, {
       command: 'associate-isp',
       params: {
         'isp-id': mockProduct.productId,
-        'skill-id': _skillId
+        'skill-id': isp.skillId
       }
     });
   });

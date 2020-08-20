@@ -1,15 +1,16 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const path = require('path');
-const Generator = require('./generator').default;
-const projectNameValidate = require('./validators/projectNameValidator');
-require('../../getter.polyfill');
-const debug = require('debug')('config-generator');
+import { basename, dirname } from 'path';
+import Generator from './generator';
+import projectNameValidate from './validators/projectNameValidator';
+import '../../getter.polyfill';
+import debug from 'debug';
+const configGeneratorDebug = debug('config-generator');
 
 class ConfigGenerator extends Generator {
   static initClass() {
@@ -20,7 +21,7 @@ class ConfigGenerator extends Generator {
       if (this.nameCandidate) {
         return this.nameCandidate;
       }
-      const nameCandidate = path.basename(this._rootPath());
+      const nameCandidate = basename(this._rootPath());
       try {
         if (projectNameValidate(nameCandidate)) {
           this.nameCandidate = nameCandidate;
@@ -43,7 +44,7 @@ class ConfigGenerator extends Generator {
   async generate() {
     const configFileName = await this._configFile();
 
-    let configRoot = configFileName ? path.dirname(configFileName) : '';
+    let configRoot = configFileName ? dirname(configFileName) : '';
     if (!configRoot) {
       const options = {
         type: 'input',
@@ -95,7 +96,7 @@ class ConfigGenerator extends Generator {
       this.logger.log(`existing ${fileName} found -> skipping creation`);
       return fileName;
     } catch (err) {
-      debug(err);
+      configGeneratorDebug(err);
     }
   }
 
@@ -105,4 +106,4 @@ class ConfigGenerator extends Generator {
 };
 ConfigGenerator.initClass();
 
-module.exports = ConfigGenerator;
+export default ConfigGenerator;

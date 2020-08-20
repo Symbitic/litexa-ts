@@ -1,13 +1,13 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const child_process = require('child_process');
+import { exec } from 'child_process';
 
-const execPromise = command => new Promise((resolve, reject) => child_process.exec(command, {}, (err, stdout, stderr) => {
+const execPromise = command => new Promise((resolve, reject) => exec(command, {}, (err, stdout, stderr) => {
   if (stderr) {
     return reject(stderr.toString());
   }
@@ -17,7 +17,7 @@ const execPromise = command => new Promise((resolve, reject) => child_process.ex
   return resolve(stdout);
 }));
 
-function getCurrentState() {
+export function getCurrentState() {
   const info = {};
 
   return execPromise('git rev-parse HEAD')
@@ -54,6 +54,4 @@ function getCurrentState() {
     info.currentCommit = "could not retrieve git info";
     return info.gitError = "" + err;
   });
-};
-
-exports.getCurrentState = getCurrentState;
+}

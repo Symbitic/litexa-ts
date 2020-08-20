@@ -1,23 +1,25 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const fs = require('fs');
-const path = require('path');
-const { PNG } = require('pngjs');
-const Generator = require('./generator').default;
-const debug = require('debug')('litexa');
+import { existsSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { PNG } from 'pngjs';
+import Generator from './generator';
+import debug from 'debug';
+const litexaDebug = debug('litexa');
 
-class SkillIconsGenerator extends Generator {
-  static initClass() {
-    this.description = 'skill icons';
+export default class SkillIconsGenerator extends Generator {
+  static description() {
+    return 'skill icons';
   }
 
   constructor(args) {
     super(args);
+    this.description = 'skill icons';
   }
 
   generate() {
@@ -29,14 +31,14 @@ class SkillIconsGenerator extends Generator {
 
   // "Private" Methods
   _destination() {
-    return path.join(this._rootPath(), 'litexa', 'assets');
+    return join(this._rootPath(), 'litexa', 'assets');
   }
 
   _ensureIcon(size) {
     const name = `icon-${size}.png`;
-    const filename = path.join(this._destination(), name);
+    const filename = join(this._destination(), name);
 
-    if (fs.existsSync(filename)) {
+    if (existsSync(filename)) {
       this.logger.log(`existing assets/${name} found -> skipping creation`);
       return;
     }
@@ -50,7 +52,7 @@ class SkillIconsGenerator extends Generator {
 
     const hh = size / 2;
     let t1 = Math.floor((hh * 29) / 30);
-    debug(`${size} icon circle radius ${t1}`);
+    litexaDebug(`${size} icon circle radius ${t1}`);
     let t2 = Math.floor((t1 * 3) / 4);
     t1 = t1 * t1;
     t2 = t2 * t2;
@@ -76,9 +78,6 @@ class SkillIconsGenerator extends Generator {
 
     // Write it
     const buffer = PNG.sync.write(png, {});
-    return fs.writeFileSync(filename, buffer);
+    return writeFileSync(filename, buffer);
   }
 }
-SkillIconsGenerator.initClass();
-
-module.exports = SkillIconsGenerator;

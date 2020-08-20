@@ -5,9 +5,9 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-module.exports.fetchAll = function(event, stateContext, after) {
+export function fetchAll(event, stateContext, after) {
   if (stateContext.inSkillProducts.inSkillProducts == null) {
     stateContext.inSkillProducts.inSkillProducts = [];
   }
   after();
-};
+}

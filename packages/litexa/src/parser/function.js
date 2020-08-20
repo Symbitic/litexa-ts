@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { ParserError } = require('./errors');
+import { ParserError } from './errors';
 
 const operatorMap = {
   '+': '+',
@@ -65,7 +65,7 @@ function evaluateStaticValue(v, context, location) {
   throw `don't know how to static evaluate ${JSON.stringify(v)}`;
 };
 
-class EvaluateExpression {
+export class EvaluateExpression {
   constructor(expression) {
     this.expression = expression;
   }
@@ -79,7 +79,7 @@ class EvaluateExpression {
   }
 };
 
-class Expression {
+export class Expression {
   constructor(location, root) {
     this.location = location;
     this.root = root;
@@ -109,7 +109,7 @@ class Expression {
   }
 };
 
-class UnaryExpression {
+export class UnaryExpression {
   constructor(location, op, val) {
     this.location = location;
     this.op = op;
@@ -149,7 +149,7 @@ class UnaryExpression {
   }
 };
 
-class BinaryExpression {
+export class BinaryExpression {
   constructor(location, left, op, right) {
     this.location = location;
     this.left = left;
@@ -197,7 +197,7 @@ class BinaryExpression {
   }
 };
 
-class LocalExpressionCall {
+export class LocalExpressionCall {
   constructor(location, name, arguments1) {
     this.location = location;
     this.name = name;
@@ -228,7 +228,7 @@ class LocalExpressionCall {
   }
 };
 
-class DBExpressionCall {
+export class DBExpressionCall {
   constructor(location, name, arguments1) {
     this.location = location;
     this.name = name;
@@ -258,7 +258,7 @@ class DBExpressionCall {
   }
 };
 
-class IfCondition {
+export class IfCondition {
   constructor(expression, negated) {
     this.expression = expression;
     this.negated = negated;
@@ -308,7 +308,7 @@ class IfCondition {
   }
 };
 
-class ElseCondition {
+export class ElseCondition {
   constructor(expression, negated) {
     this.expression = expression;
     this.negated = negated;
@@ -359,7 +359,7 @@ class ElseCondition {
   }
 };
 
-class ForStatement {
+export class ForStatement {
   constructor(keyName, valueName, sourceName) {
     this.keyName = keyName;
     this.valueName = valueName;
@@ -425,7 +425,7 @@ class ForStatement {
   }
 };
 
-class SwitchStatement {
+export class SwitchStatement {
   constructor(assignments) {
     this.assignments = assignments;
     this.cases = [];
@@ -489,7 +489,7 @@ class SwitchStatement {
   }
 };
 
-class SwitchAssignment {
+export class SwitchAssignment {
   constructor(location, name, value) {
     this.location = location;
     this.name = name;
@@ -523,7 +523,7 @@ class SwitchAssignment {
   }
 };
 
-class SwitchCase {
+export class SwitchCase {
   constructor(location, operator, value) {
     this.location = location;
     this.operator = operator;
@@ -572,7 +572,7 @@ class SwitchCase {
   }
 };
 
-class SetSetting {
+export class SetSetting {
   constructor(variable, value) {
     this.variable = variable;
     this.value = value;
@@ -583,7 +583,7 @@ class SetSetting {
   }
 };
 
-class DBAssignment {
+export class DBAssignment {
   constructor(name, expression) {
     this.name = name;
     this.expression = expression;
@@ -599,7 +599,7 @@ class DBAssignment {
   }
 };
 
-class WrapClass {
+export class WrapClass {
   constructor(className, variableName, source) {
     this.className = className;
     this.variableName = variableName;
@@ -612,7 +612,7 @@ class WrapClass {
   }
 };
 
-class DBTypeDefinition {
+export class DBTypeDefinition {
   constructor(location, name, type) {
     this.location = location;
     this.name = name;
@@ -620,7 +620,7 @@ class DBTypeDefinition {
   }
 };
 
-class LocalDeclaration {
+export class LocalDeclaration {
   constructor(name, expression) {
     this.name = name;
     this.expression = expression;
@@ -632,7 +632,7 @@ class LocalDeclaration {
   }
 };
 
-class LocalVariableAssignment {
+export class LocalVariableAssignment {
   constructor(name, expression) {
     this.name = name;
     this.expression = expression;
@@ -644,7 +644,7 @@ class LocalVariableAssignment {
   }
 };
 
-class LocalVariableReference {
+export class LocalVariableReference {
   constructor(location, name) {
     this.location = location;
     this.name = name;
@@ -660,7 +660,7 @@ class LocalVariableReference {
   }
 };
 
-class SlotVariableAssignment {
+export class SlotVariableAssignment {
   constructor(location, name, expression) {
     this.location = location;
     this.name = name;
@@ -675,7 +675,7 @@ class SlotVariableAssignment {
   }
 };
 
-class Directive {
+export class Directive {
   constructor(expression) {
     this.expression = expression;
   }
@@ -702,7 +702,7 @@ for(var i=0; i<__directives.length; ++i) {
   }
 };
 
-class RecordMetric {
+export class RecordMetric {
   constructor(name) {
     this.name = name;
   }
@@ -712,7 +712,7 @@ class RecordMetric {
   }
 };
 
-class SetResponseSpacing {
+export class SetResponseSpacing {
   constructor(milliseconds) {
     this.milliseconds = milliseconds;
   }
@@ -722,7 +722,7 @@ class SetResponseSpacing {
   }
 };
 
-class Func {
+export class Func {
   constructor() {
     this.languages = {};
   }
@@ -814,7 +814,7 @@ class Func {
   }
 };
 
-class FunctionMap {
+export class FunctionMap {
   /*
     Interface compatible with Function, this is a
     convenience object for collecting named blocks of
@@ -875,7 +875,7 @@ class FunctionMap {
   }
 };
 
-const lib = {
+export const lib = {
   EvaluateExpression,
   Expression,
   UnaryExpression,
@@ -903,7 +903,7 @@ const lib = {
   FunctionMap
 };
 
-module.exports = {
+export default {
   lib,
   ...lib
 };

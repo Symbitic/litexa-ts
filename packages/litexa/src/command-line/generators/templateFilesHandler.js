@@ -1,20 +1,20 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const fs = require('fs');
-const path = require('path');
+import { readdirSync, readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
 
-class TemplateFilesHandler {
+export default class TemplateFilesHandler {
   constructor(args) {
     this.logger = args.logger;
-    this.resolvePath = args.syncPathResolver || path.join;
-    this.readDir = args.syncDirectoryReader || fs.readdirSync;
-    this.readFile = args.syncFileReader || fs.readFileSync;
-    this.writeFile = args.syncFileWriter || fs.writeFileSync;
+    this.resolvePath = args.syncPathResolver || join;
+    this.readDir = args.syncDirectoryReader || readdirSync;
+    this.readFile = args.syncFileReader || readFileSync;
+    this.writeFile = args.syncFileWriter || writeFileSync;
   }
 
   // Public Interface
@@ -43,7 +43,7 @@ class TemplateFilesHandler {
   }
 
   _writeFile(destination, filename, data) {
-    const source = path.join(destination, filename);
+    const source = join(destination, filename);
     this.writeFile(source, `${data}\n`, 'utf8');
     this.logger.log(`created a default ${filename} file`);
   }
@@ -56,5 +56,3 @@ class TemplateFilesHandler {
     return this.readFile(this.resolvePath(__dirname, '../../../', 'templates', language, file), 'utf8');
   }
 }
-
-module.exports = TemplateFilesHandler;

@@ -5,9 +5,9 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const DBInterface = require('./dbInterface');
+import DBInterface from './dbInterface';
 
-class MockDB {
+export default class MockDB {
   constructor() {
     this.identities = {};
   }
@@ -47,5 +47,3 @@ class MockDB {
     return setTimeout((() => fetchCallback(null, database)), 1);
   }
 };
-
-module.exports = MockDB;

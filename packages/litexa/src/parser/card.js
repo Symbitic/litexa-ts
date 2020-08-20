@@ -5,7 +5,6 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { AssetName } = require('./assets').lib;
 const { ParserError } = require('./errors').lib;
 
 class Card {

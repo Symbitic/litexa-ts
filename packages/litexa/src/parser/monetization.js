@@ -5,9 +5,9 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { ParserError } = require('./errors');
+import { ParserError } from './errors';
 
-class BuyInSkillProductStatement {
+export class BuyInSkillProductStatement {
   constructor(referenceName) {
     this.referenceName = referenceName;
   }
@@ -19,7 +19,7 @@ class BuyInSkillProductStatement {
   }
 };
 
-class CancelInSkillProductStatement {
+export class CancelInSkillProductStatement {
   constructor(referenceName) {
     this.referenceName = referenceName;
   }
@@ -31,7 +31,7 @@ class CancelInSkillProductStatement {
   }
 };
 
-class UpsellInSkillProductStatement {
+export class UpsellInSkillProductStatement {
   constructor(referenceName) {
     this.referenceName = referenceName;
     this.attributes = { message: '' };
@@ -60,7 +60,7 @@ const lib = {
   UpsellInSkillProductStatement
 };
 
-module.exports = {
+export default {
   lib,
   ...lib
 };

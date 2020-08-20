@@ -13,7 +13,7 @@
 //  * .js / .coffee are code library files
 //  * .csv are data files?
 
-const coffee = require('coffeescript');
+import { compile } from 'coffeescript';
 
 const fileCategories = [
   {
@@ -30,7 +30,7 @@ const fileCategories = [
   }
 ];
 
-function infoFromFilename(filename) {
+export function infoFromFilename(filename) {
   const test = function(type, regex) {
     const match = regex.exec(filename);
     if (match) {
@@ -50,7 +50,7 @@ function infoFromFilename(filename) {
   return null;
 };
 
-class File {
+export class File {
   constructor(name, language, extension, content, fileCategory) {
     this.name = name;
     this.extension = extension;
@@ -93,14 +93,14 @@ class File {
   }
 };
 
-class JavaScriptFile extends File {
+export class JavaScriptFile extends File {
   constructor(name, language, extension, content, fileCategory) {
     super(name, language, extension, content, fileCategory);
     this.isCode = true;
   }
 };
 
-class LiterateAlexaFile extends File {
+export class LiterateAlexaFile extends File {
   replaceContent(language, content) {
     // normalize line endings: CRLF to just LF
     content = content.replace(/\r\n/g, '\n');
@@ -115,7 +115,7 @@ class LiterateAlexaFile extends File {
   }
 };
 
-class CoffeeScriptFile extends File {
+export class CoffeeScriptFile extends File {
   constructor(name, language, extension, source, fileCategory) {
     super(name, language, extension, "", fileCategory);
     this.content = {};
@@ -129,7 +129,7 @@ class CoffeeScriptFile extends File {
     this.raw[language] = source;
     this.exception = null;
     try {
-      return this.content[language] = coffee.compile(source, {
+      return this.content[language] = compile(source, {
         bare: true,
         filename: this.name + '.coffee',
         sourceMap: true,
@@ -142,7 +142,7 @@ class CoffeeScriptFile extends File {
   }
 };
 
-class JSONDataFile extends File {
+export class JSONDataFile extends File {
   constructor(name, language, extension, source, fileCategory) {
     super(name, language, extension, "", fileCategory);
     this.replaceContent('default', source);
@@ -162,7 +162,7 @@ class JSONDataFile extends File {
   }
 };
 
-module.exports = {
+export default {
   infoFromFilename,
   File,
   JavaScriptFile,

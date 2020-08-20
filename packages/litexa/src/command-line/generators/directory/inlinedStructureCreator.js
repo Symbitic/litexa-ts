@@ -5,7 +5,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const StructureCreator = require('./structureCreator').default;
+import StructureCreator from './structureCreator';
 
 /*
 * Directory Structure
@@ -29,7 +29,7 @@ const StructureCreator = require('./structureCreator').default;
 *
 */
 
-class InlinedStructureCreator extends StructureCreator {
+export default class InlinedStructureCreator extends StructureCreator {
   constructor(args) {
     super(args);
     this.commonDir = 'common';
@@ -75,5 +75,3 @@ class InlinedStructureCreator extends StructureCreator {
     });
   }
 };
-
-module.exports = InlinedStructureCreator;

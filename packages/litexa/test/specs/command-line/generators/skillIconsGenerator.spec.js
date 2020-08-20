@@ -8,16 +8,16 @@
 import { assert, expect } from 'chai';
 import { match, spy, stub } from 'sinon';
 import { existsSync } from 'fs';
-import { sync } from 'mkdirp';
+import { sync as mkdirp } from 'mkdirp';
 import { join } from 'path';
-import { sync as _sync } from 'rimraf';
+import { sync as rimraf } from 'rimraf';
 
 import SkillIconsGenerator from '../../../../src/command-line/generators/skillIconsGenerator';
 
 describe('SkillIconsGenerator', () => {
   describe('#description', () => it('has a class property to describe itself', () => {
     assert(SkillIconsGenerator.hasOwnProperty('description'), 'has a property description');
-    expect(SkillIconsGenerator.description).to.equal('skill icons');
+    expect(SkillIconsGenerator.description()).to.equal('skill icons');
   }));
 
   describe('#generate', () => {
@@ -31,10 +31,10 @@ describe('SkillIconsGenerator', () => {
       loggerInterface = {
         log() { return undefined; }
       };
-      sync(join('litexa', 'assets'));
+      mkdirp(join('litexa', 'assets'));
     });
 
-    afterEach(() => _sync(join('litexa', 'assets')));
+    afterEach(() => rimraf(join('litexa', 'assets')));
 
     it('returns a promise', () => {
       const skillIconsGenerator = new SkillIconsGenerator({
