@@ -7,5 +7,6 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-require = require("esm")(module);
-require('./router').run();
+require('ts-node').register();
+require = require('esm')(module);
+require('./router.ts').run();

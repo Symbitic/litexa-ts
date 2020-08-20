@@ -7,10 +7,11 @@
 
 import { assert, expect } from 'chai';
 import { match, spy } from 'sinon';
-
 import { existsSync, unlinkSync, writeFileSync, readFileSync } from 'fs';
-import Test, { MockArtifactInterface, mockArtifact } from '../../../helpers';
 import ArtifactTrackerGenerator from '../../../../src/command-line/generators/artifactTrackerGenerator';
+import Test from '../../../helpers';
+
+const { mockArtifact } = Test;
 
 describe('ArtifactTrackerGenerator', () => {
   describe('#description', () => {
@@ -44,7 +45,7 @@ describe('ArtifactTrackerGenerator', () => {
       const artifactTrackerGenerator = new ArtifactTrackerGenerator({
         options,
         logger: loggerInterface,
-        artifactClass: MockArtifactInterface
+        artifactClass: Test.MockArtifactInterface
       });
 
       assert.typeOf(artifactTrackerGenerator.generate(), 'promise', 'it returns a promise');
@@ -54,7 +55,7 @@ describe('ArtifactTrackerGenerator', () => {
       const artifactTrackerGenerator = new ArtifactTrackerGenerator({
         options,
         logger: loggerInterface,
-        artifactClass: MockArtifactInterface
+        artifactClass: Test.MockArtifactInterface
       });
 
       await artifactTrackerGenerator.generate();
@@ -70,7 +71,7 @@ describe('ArtifactTrackerGenerator', () => {
       const artifactTrackerGenerator = new ArtifactTrackerGenerator({
         options,
         logger: loggerInterface,
-        artifactClass: MockArtifactInterface
+        artifactClass: Test.MockArtifactInterface
       });
 
       await artifactTrackerGenerator.generate();
@@ -83,12 +84,12 @@ describe('ArtifactTrackerGenerator', () => {
     it('makes a call to saveGlobal when file exists', async () => {
       writeFileSync('artifacts.json', '{"content":"json"}', 'utf8');
       const constructorSpy = spy(Test, 'MockArtifactInterface');
-      const saveSpy = spy(MockArtifactInterface.prototype, 'saveGlobal');
+      const saveSpy = spy(Test.MockArtifactInterface.prototype, 'saveGlobal');
 
       const artifactTrackerGenerator = new ArtifactTrackerGenerator({
         options,
         logger: loggerInterface,
-        artifactClass: MockArtifactInterface
+        artifactClass: Test.MockArtifactInterface
       });
 
       await artifactTrackerGenerator.generate();
@@ -103,12 +104,12 @@ describe('ArtifactTrackerGenerator', () => {
 
     it('makes a call to saveGlobal when file does not', async () => {
       const constructorSpy = spy(Test, 'MockArtifactInterface');
-      const saveSpy = spy(MockArtifactInterface.prototype, 'saveGlobal');
+      const saveSpy = spy(Test.MockArtifactInterface.prototype, 'saveGlobal');
 
       const artifactTrackerGenerator = new ArtifactTrackerGenerator({
         options,
         logger: loggerInterface,
-        artifactClass: MockArtifactInterface
+        artifactClass: Test.MockArtifactInterface
       });
 
       await artifactTrackerGenerator.generate();

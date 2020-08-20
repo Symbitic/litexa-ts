@@ -15,7 +15,8 @@ import { loadConfig } from './project-config';
 import { Skill } from '../parser/skill';
 import ProjectInfo from './project-info';
 
-/* The skill localization object has the following contents:
+/*
+  The skill localization object has the following contents:
   {
     intents: {       // map of all skill intents, and model-ready utterances
       "SomeIntentName": {

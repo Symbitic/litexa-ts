@@ -10,7 +10,7 @@ import InlinedStructureCreator from '../../../../src/command-line/generators/dir
 import SeparateStructureCreator from '../../../../src/command-line/generators/directory/separateStructureCreator';
 import BundlerStructureCreator from '../../../../src/command-line/generators/directory/bundlerStructureCreator';
 import { expect } from 'chai';
-import { MockTemplateFilesHandlerInterface } from '../../../helpers';
+import Test from '../../../helpers';
 
 describe('DirectoryCreator', () => describe('#constructor', () => {
   let options = undefined;
@@ -22,7 +22,7 @@ describe('DirectoryCreator', () => describe('#constructor', () => {
       bundlingStrategy: 'none',
       logger: loggerInterface,
       litexaDirectory: 'litexa',
-      templateFilesHandlerClass: MockTemplateFilesHandlerInterface
+      templateFilesHandlerClass: Test.MockTemplateFilesHandlerInterface
     };
   });
 

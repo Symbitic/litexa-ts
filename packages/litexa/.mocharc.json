@@ -1,9 +1,8 @@
 {
   "full-trace": true,
   "require": [
-    "@litexa/core/aliasing",
     "ts-node/register"
   ],
   "timeout": 2000,
-  "watch-extensions": [ "ts" ]
+  "watch-extensions": [ "js", "ts" ]
 }

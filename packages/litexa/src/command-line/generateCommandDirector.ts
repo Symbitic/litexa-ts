@@ -5,18 +5,43 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-import inquirer from 'inquirer';
+import inquirer, { Inquirer } from 'inquirer';
 
-class GenerateCommandDirector {
-  constructor(args) {
+export interface IGenerateCommandDirectorArgs {
+  targetDirectory?: string;
+  selectedOptions: any;
+  inputHandler?: Inquirer;
+  availableOptions: string[];
+};
+
+type ConfigLanguage = 'javascript' | 'json' | 'typescript' | 'coffee';
+type SourceLanguage = 'javascript' | 'typescript' | 'coffee';
+type BundlingStrategy = 'webpack' | 'npm-link' | 'none';
+
+export interface IGenerateCommandDirectorOptions {
+  dir?: string;
+  configLanguage?: ConfigLanguage;
+  sourceLanguage?: SourceLanguage;
+  bundlingStrategy?: BundlingStrategy;
+  projectName?: string;
+  storeTitleName?: string;
+};
+
+export default class GenerateCommandDirector {
+  availableOptions: string[];
+  inquirer: Inquirer;
+  selectedOptions: any;
+  targetDirectory?: string;
+
+  constructor(args: IGenerateCommandDirectorArgs) {
     this.targetDirectory = args.targetDirectory;
     this.selectedOptions = args.selectedOptions;
     this.availableOptions = args.availableOptions;
     this.inquirer = args.inputHandler || inquirer;
   }
 
-  async direct() {
-    const options = {};
+  async direct(): Promise<IGenerateCommandDirectorOptions> {
+    const options: IGenerateCommandDirectorOptions = {};
 
     const selectedAtLeastOneOption = this.availableOptions.reduce(this.optionExists.bind(this), false);
     if (selectedAtLeastOneOption) {
@@ -42,7 +67,7 @@ class GenerateCommandDirector {
     return options;
   }
 
-  async _inquireAboutTargetDirectory() {
+  async _inquireAboutTargetDirectory(): Promise<string> {
     const result = await this.inquirer.prompt({
       type: 'input',
       name: 'targetDir',
@@ -52,7 +77,7 @@ class GenerateCommandDirector {
     return result.targetDir;
   }
 
-  async _inqureAboutLanguageChoice() {
+  async _inqureAboutLanguageChoice(): Promise<SourceLanguage> {
     const result = await this.inquirer.prompt({
       type: 'list',
       name: 'language',
@@ -78,7 +103,7 @@ class GenerateCommandDirector {
     return result.language;
   }
 
-  async _inquireAboutCodeOrganization() {
+  async _inquireAboutCodeOrganization(): Promise<BundlingStrategy> {
     const result = await this.inquirer.prompt({
       type: 'list',
       name: 'bundlingStrategy',
@@ -104,9 +129,7 @@ class GenerateCommandDirector {
     return result.bundlingStrategy;
   }
 
-  optionExists(exists, option) {
+  optionExists(exists: string, option: boolean): boolean {
     return exists || this.selectedOptions.hasOwnProperty(option);
   }
 }
-
-export default GenerateCommandDirector;

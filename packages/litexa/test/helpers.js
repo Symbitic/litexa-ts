@@ -52,7 +52,7 @@ class MockArtifactInterface {
   }
 };
 
-module.exports = {
+export default {
   mockArtifact,
   MockArtifactInterface,
   MockDirectoryCreator,

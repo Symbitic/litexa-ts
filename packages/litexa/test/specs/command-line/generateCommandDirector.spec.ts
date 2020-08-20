@@ -6,7 +6,7 @@
  */
 
 import { assert, expect } from 'chai';
-import { match, spy, stub } from 'sinon';
+import { match, stub } from 'sinon';
 
 import GenerateCommandDirector from '../../../src/command-line/generateCommandDirector';
 

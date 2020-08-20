@@ -36,7 +36,7 @@ export async function run() {
     .description("compiles a project's language model and prints it to the console.")
     .option('-d --deployment [deployment]', "which deployment to run, using the name from the deployments map in the Litexa configuration file.", 'development')
     .action(cmd => {
-      chalk.enabled = cmd.parent.color;
+      chalk.level = cmd.parent.color ? chalk.level : 0;
       const options = {
         root,
         type: 'model',
@@ -51,7 +51,7 @@ export async function run() {
     .description("compiles a project's JavaScript handler and prints it to the console.")
     .option('-d --deployment [deployment]', "which deployment to run, using the name from the deployments map in the Litexa configuration file.", 'development')
     .action(cmd => {
-      chalk.enabled = cmd.parent.color;
+      chalk.level = cmd.parent.color ? chalk.level : 0;
       const options = {
         root,
         deployment: cmd.deployment,
@@ -146,7 +146,7 @@ export async function run() {
         process.exit(1);
       }
 
-      chalk.enabled = cmd.parent.color;
+      chalk.level = cmd.parent.color ? chalk.level : 0;
       const options = {
         root,
         deployment: cmd.deployment,
@@ -191,7 +191,7 @@ export async function run() {
         console.log(chalk.yellow(error.message));
       });
 
-      chalk.enabled = cmd.parent.color;
+      chalk.level = cmd.parent.color ? chalk.level : 0;
       const options = {
         root,
         filter,
@@ -269,7 +269,7 @@ export async function run() {
 
       const selections = await guided.direct();
 
-      chalk.enabled = cmd.parent.color;
+      chalk.level = cmd.parent.color ? chalk.level : 0;
       const options = {
         root,
         dir: path.join(root, selections.dir || '.'),
@@ -287,7 +287,8 @@ export async function run() {
     .description("retrieves runtime logs from a deployed skill.")
     .option('-d --deployment [deployment]', "which deployment to pull logs from, using the name from the deployments map in the Litexa configuration file.", 'development')
     .action((cmd) => {
-      chalk.enabled = cmd.parent.color;
+
+      chalk.level = cmd.parent.color ? chalk.level : 0;
       const options = {
         root,
         deployment: cmd.deployment,
@@ -300,7 +301,7 @@ export async function run() {
     .command('info')
     .description("prints out a litexa project's information block.")
     .action(async (cmd) => {
-      chalk.enabled = cmd.color;
+      chalk.level = cmd.parent.color ? chalk.level : 0;
       try {
         const config = await (projectConfig.loadConfig(root));
         const info = new ProjectInfo({jsonConfig: config});

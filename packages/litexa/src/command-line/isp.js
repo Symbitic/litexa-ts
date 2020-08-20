@@ -300,31 +300,25 @@ ${err.message}`
     });
   },
 
-  deleteRemoteProduct(product) {
-    return new Promise((resolve, reject) => {
-      return this.disassociateProduct(product)
-        .then(() => {
-          this.logger.log(`deleting in-skill product '${product.referenceName}' from server ...`);
-          return this.smapi.call({
-            askProfile: this.askProfile,
-            command: 'delete-isp',
-            params: {
-              'isp-id': product.productId,
-              stage: this.stage
-            },
-            logChannel: this.logger
-          });
-        })
-        .then(data => {
-          this.logger.verbose("successfully deleted product");
-          return resolve();
-        }).catch(err => {
-          this.logger.error(`deleting in-skill product '${product.referenceName}' failed with error: \
-${err.message}`
-          );
-          return reject(err);
-        });
-    });
+  async deleteRemoteProduct(product) {
+    try {
+      await this.disassociateProduct(product);
+      this.logger.log(`deleting in-skill product '${product.referenceName}' from server ...`);
+      const data = this.smapi.call({
+        askProfile: this.askProfile,
+        command: 'delete-isp',
+        params: {
+          'isp-id': product.productId,
+          stage: this.stage
+        },
+        logChannel: this.logger
+      });
+      this.logger.verbose("successfully deleted product");
+    }
+    catch (err) {
+      this.logger.error(`deleting in-skill product '${product.referenceName}' failed with error: \
+${err.message}`);
+    }
   },
 
   associateProduct(product) {

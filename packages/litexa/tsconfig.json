@@ -3,12 +3,7 @@
   "compilerOptions": {
     "rootDir": "./src/",
     "outDir": "./dist/",
-    "allowJs": true,
-    "paths": {
-      "@root/*": [ "./*" ],
-      "@src/*": [ "src/*" ],
-      "@test/*": [ "test/*" ]
-    }
+    "allowJs": true
   },
   "include": [
     "./src/"

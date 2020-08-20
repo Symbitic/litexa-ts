@@ -2,9 +2,10 @@
   "full-trace": true,
   "require": [
     "coffeescript/register",
+    "ts-node/register",
     "esm",
     "./preamble.js"
   ],
   "timeout": 20000,
-  "watch-extensions": ["coffee"]
+  "watch-extensions": [ "coffee", "js", "ts" ]
 }

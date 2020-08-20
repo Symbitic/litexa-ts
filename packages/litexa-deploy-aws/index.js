@@ -7,9 +7,6 @@
  *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-
-var coffee = require('coffeescript').register();
-
 module.exports = {
   assets: require('./src/assets'),
   lambda: require('./src/lambda'),

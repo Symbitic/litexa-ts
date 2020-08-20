@@ -11,8 +11,7 @@ import { existsSync } from 'fs';
 import { sync } from 'rimraf';
 
 import SourceCodeGenerator from '../../../../src/command-line/generators/sourceCodeGenerator';
-
-import { MockProjectInfoInterface, MockFileHandlerInterface, MockDirectoryCreatorInterface } from '../../../helpers';
+import Test from '../../../helpers';
 
 describe('SourceCodeGenerator', () => {
   describe('#description', () => it('has a class property to describe itself', () => {
@@ -57,9 +56,9 @@ describe('SourceCodeGenerator', () => {
       const sourceCodeGenerator = new SourceCodeGenerator({
         options,
         logger: loggerInterface,
-        projectInfoClass: MockProjectInfoInterface,
-        templateFilesHandlerClass: MockFileHandlerInterface,
-        directoryCreatorClass: MockDirectoryCreatorInterface
+        projectInfoClass: Test.MockProjectInfoInterface,
+        templateFilesHandlerClass: Test.MockFileHandlerInterface,
+        directoryCreatorClass: Test.MockDirectoryCreatorInterface
       });
       const hasCodeStub = stub(sourceCodeGenerator, '_hasLitexaCode').returns(true);
       assert.typeOf(sourceCodeGenerator.generate(), 'promise', 'it returns a promise');
