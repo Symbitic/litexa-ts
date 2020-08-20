@@ -8,6 +8,5 @@
  */
 
 require('../../aliasing');
-require('coffeescript').register();
 require = require("esm")(module);
 require('./router').run();

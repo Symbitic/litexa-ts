@@ -5,7 +5,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { Skill } = require('../parser/skill');
+const { Skill } = require('../parser/skill').default;
 const fs = require('fs');
 const path = require('path');
 const config = require('./project-config');
