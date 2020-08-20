@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const preamble = require('../preamble');
+import preamble from '../preamble';
 
 describe('supports lexical scoping', () => {
   it('runs the lexical-scoping integration test', () => {

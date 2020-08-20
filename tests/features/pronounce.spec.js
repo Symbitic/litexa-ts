@@ -7,8 +7,8 @@
 
 import preamble from '../preamble';
 
-describe('supports card statements', () => {
-  it('runs the cards integration test', () => {
-    return preamble.runSkill('cards');
+describe('supports pronounce skill', () => {
+  it('runs the pronounce integration test', () => {
+    preamble.runSkill('pronounce');
   });
 });

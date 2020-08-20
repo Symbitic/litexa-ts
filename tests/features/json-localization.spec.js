@@ -5,7 +5,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const preamble = require('../preamble');
+import preamble from '../preamble';
 
 describe('supports the JSON localization feature', () => {
   it('runs the json-localization integration test', () => {

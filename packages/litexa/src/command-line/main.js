@@ -7,6 +7,5 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-require('../../aliasing');
 require = require("esm")(module);
 require('./router').run();

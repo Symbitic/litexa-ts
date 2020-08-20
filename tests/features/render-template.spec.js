@@ -7,8 +7,8 @@
 
 import preamble from '../preamble';
 
-describe('supports card statements', () => {
-  it('runs the cards integration test', () => {
-    return preamble.runSkill('cards');
+describe('supports the @litexa/render-template extension', function() {
+  return it('runs the render-template integration test', function() {
+    return preamble.runSkill('render-template');
   });
 });

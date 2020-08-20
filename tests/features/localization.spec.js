@@ -1,12 +1,12 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const assert = require('assert');
-const preamble = require('../preamble');
+import assert from 'assert';
+import preamble from '../preamble';
 
 describe('supports languages folder overrides', () => {
   function testCompleteSlotValuesForIntent(actualSlots, expectedSlots) {
@@ -41,6 +41,7 @@ describe('supports languages folder overrides', () => {
   it('eliminates intent handlers that do not exist in the overridden state', async () => {
     const frModel = await preamble.buildSkillModel('localization', 'fr');
     const intents = frModel.languageModel.intents.map(intent => intent.name);
+    // TODO ???
     !intents.includes('CAT');
   });
 

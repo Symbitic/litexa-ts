@@ -52,6 +52,7 @@
     "chokidar": "3.4.2",
     "coffeescript": "2.5.1",
     "cpy-cli": "3.1.1",
+    "esm": "3.2.25",
     "lerna": "3.22.1",
     "mkdirp": "1.0.4",
     "mocha": "8.1.1",

@@ -7,8 +7,8 @@
 
 import preamble from '../preamble';
 
-describe('supports card statements', () => {
-  it('runs the cards integration test', () => {
-    return preamble.runSkill('cards');
+describe('supports request variables', function() {
+  return it('runs the request variables integration test', function() {
+    return preamble.runSkill('request-variables');
   });
 });

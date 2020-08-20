@@ -7,8 +7,8 @@
 
 import preamble from '../preamble';
 
-describe('supports the @litexa/html extension', () => {
-  it('runs the html-extension integration test', () => {
-    return preamble.runSkill('html-extension');
+describe('supports switch statements', () => {
+  it('runs the switch integration test', () => {
+    return preamble.runSkill('switch');
   });
 });

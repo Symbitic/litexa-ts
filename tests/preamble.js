@@ -5,17 +5,16 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const mkdirp = require('mkdirp');
-const path = require('path');
-const fs = require('fs');
-const rimraf = require('rimraf');
-const { spawnSync } = require('child_process');
+import mkdirp from 'mkdirp';
+import path from 'path';
+import fs from 'fs';
+import rimraf from 'rimraf';
+import { spawnSync } from 'child_process';
 
-require('@litexa/core/aliasing');
-const Skill = require('@litexa/core/src/parser/skill');
-const ProjectInfo = require('@litexa/core/src/command-line/project-info');
-const builder = require('@litexa/core/src/command-line/skill-builder');
-const { __resetLib } = require('@litexa/core/src/parser/parserlib');
+import Skill from '@litexa/core/src/parser/skill';
+import ProjectInfo from '@litexa/core/src/command-line/project-info';
+import builder from '@litexa/core/src/command-line/skill-builder';
+import { __resetLib } from '@litexa/core/src/parser/parserlib';
 
 class Logger {
   constructor(name) {
@@ -236,7 +235,7 @@ function expectFailParse(lit, errorMessageSubstring) {
   throw new Error(`Parse did not throw on: \n${lit}`);
 };
 
-module.exports = {
+export default {
   Logger,
   runSkill,
   buildSkillModel,

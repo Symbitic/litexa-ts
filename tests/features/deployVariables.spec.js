@@ -9,8 +9,8 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const assert = require('assert');
-const preamble = require('../preamble');
+import assert from 'assert';
+import preamble from '../preamble';
 
 describe('supports deploy variables and excluding blocks with them', () => {
   it('runs the deploy variables integration test', () => {

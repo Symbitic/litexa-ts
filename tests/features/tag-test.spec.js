@@ -7,8 +7,8 @@
 
 import preamble from '../preamble';
 
-describe('supports card statements', () => {
-  it('runs the cards integration test', () => {
-    return preamble.runSkill('cards');
+describe('supports Tag Testing skill', () => {
+  it('runs the tag-test integration test', () => {
+    return preamble.runSkill('tag-test');
   });
 });

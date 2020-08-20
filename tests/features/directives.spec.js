@@ -1,12 +1,12 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const assert = require('assert');
-const preamble = require('../preamble');
+import assert from 'assert';
+import preamble from '../preamble';
 
 describe('supports the directive statement', () => {
   it('runs the directive integration test', async () => {

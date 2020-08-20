@@ -1,35 +1,33 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const assert = require('assert');
-const path = require('path');
-
-const { fake } = require('sinon');
-
-const build = require('@litexa/core/src/command-line/skill-builder');
-const config = require('@litexa/core/src/command-line/project-config');
+import builder from '@litexa/core/src/command-line/skill-builder';
+import config from '@litexa/core/src/command-line/project-config';
+import { equal, ok } from 'assert';
+import { join } from 'path';
+import { fake } from 'sinon';
 
 describe('build the comments skill', () => {
   it('should validate skill name', async () => {
-    const root = path.join(__dirname, '..', 'data', 'comments');
+    const root = join(__dirname, '..', 'data', 'comments');
     const fakeValidator = fake.returns(false);
     await config.loadConfig(root, fakeValidator);
-    assert.equal(true, fakeValidator.calledOnce);
+    equal(true, fakeValidator.calledOnce);
   });
 
   it('should find the config file in the same directory', async () => {
-    const root = path.join(__dirname, '..', 'data', 'comments');
+    const root = join(__dirname, '..', 'data', 'comments');
     const loaded = await config.loadConfig(root);
-    assert.ok(loaded);
-    assert.equal('commentTests', loaded.name);
+    ok(loaded);
+    equal('commentTests', loaded.name);
   });
 
   it('should build the comments skill successfully', () => {
-    const root = path.join(__dirname, '..', 'data', 'comments');
-    return build.build(root);
+    const root = join(__dirname, '..', 'data', 'comments');
+    return builder.build(root);
   });
 });

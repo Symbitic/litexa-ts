@@ -5,9 +5,9 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const path = require('path');
-const preamble = require('../preamble');
-const test = require('@litexa/core/src/command-line/test');
+import path from 'path';
+import preamble from '../preamble';
+import test from '@litexa/core/src/command-line/test';
 
 describe('supports testing a skill', () => {
   it('runs a test on a simple skill', async () => {
