@@ -73,7 +73,7 @@ describe('LoggingChannel', () => {
         logStream
       });
       logger.write({ line: output, now: unixEpoch });
-      const lastOutStreamTime = logger['lastOutStreamTime'];
+      const lastOutStreamTime = logger.lastOutStreamTime;
       assert(lastOutStreamTime === unixEpoch, 'updated lastOutStreamTime');
     });
 

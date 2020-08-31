@@ -1,20 +1,8 @@
 /*
- * decaffeinate suggestions:
- * DS001: Remove Babel/TypeScript constructor workaround
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
- * DS202: Simplify dynamic range loops
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-/*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
 const lib = {};

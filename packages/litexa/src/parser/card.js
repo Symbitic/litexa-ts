@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { ParserError } = require('./errors').lib;
+const { ParserError } = require('./errors');
 
 class Card {
   constructor(location, title, content, imageAssetName) {

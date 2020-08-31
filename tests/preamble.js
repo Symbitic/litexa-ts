@@ -14,7 +14,7 @@ import { spawnSync } from 'child_process';
 import Skill from '@litexa/core/src/parser/skill';
 import ProjectInfo from '@litexa/core/src/command-line/project-info';
 import builder from '@litexa/core/src/command-line/skill-builder';
-import { __resetLib } from '@litexa/core/src/parser/parserlib';
+import { resetLib } from '@litexa/core/src/parser/parserlib';
 
 class Logger {
   constructor(name) {
@@ -88,7 +88,7 @@ async function runSkill(name) {
     try {
       skill.toLambda();
     } catch (error) {
-      err = error;
+      let err = error;
       if (err.location) {
         const l = err.location;
         if (l.start && l.start.line && l.start.column) {
@@ -189,7 +189,7 @@ async function buildSkillModel(name, locale) {
 };
 
 function buildSkill(lit) {
-  __resetLib();
+  resetLib();
 
   const skill = new Skill.Skill(ProjectInfo.createMock());
 

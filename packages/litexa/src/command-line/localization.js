@@ -352,7 +352,7 @@ function cloneSpeechBetweenLocalizations(options, curLocalization) {
 
 function sortObjectByKeys(obj) {
   const sortedObj = {};
-  Object.keys(obj).sort().forEach(function (key) {
+  Object.keys(obj).sort().forEach(key => {
     sortedObj[key] = obj[key];
   });
 
@@ -360,12 +360,15 @@ function sortObjectByKeys(obj) {
 }
 
 function localeSortArray(arr) {
-  const result = arr.sort(function (a, b) {
+  const result = arr.sort((a, b) => {
     // Custom sort for utterances that begin with a slot value "{slot} ..." to be higher in the list.
-    if (a.startsWith('{') && !b.startsWith('{')) { return -1; }
-    if (b.startsWith('{') && !a.startsWith('{')) { return 1; }
-
-    return a.toLowerCase().localeCompare(b.toLowerCase());
+    if (a.startsWith('{') && !b.startsWith('{')) {
+      return -1;
+    } else if (b.startsWith('{') && !a.startsWith('{')) {
+      return 1;
+    } else {
+      return a.toLowerCase().localeCompare(b.toLowerCase());
+    }
   });
 
   return result;

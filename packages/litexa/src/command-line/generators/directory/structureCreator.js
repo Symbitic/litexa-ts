@@ -10,15 +10,11 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 import searchReplace from '../searchReplace';
 import strategies from '../../bundlingStrategies';
-import '../../../getter.polyfill';
 
-class StructureCreator {
-  static initClass() {
-    // Getters and Setters
-    this.getter('litexaDirectory', function() {
-      if (this.litexaFolder) { return this.litexaFolder; }
-      return this.litexaFolder = this.path.join(this.rootPath, 'litexa');
-    });
+export default class StructureCreator {
+  get litexaDirectory() {
+    if (this.litexaFolder) { return this.litexaFolder; }
+    return this.litexaFolder = this.path.join(this.rootPath, 'litexa');
   }
 
   constructor(args) {
@@ -67,6 +63,3 @@ class StructureCreator {
     });
   }
 };
-StructureCreator.initClass();
-
-export default StructureCreator;

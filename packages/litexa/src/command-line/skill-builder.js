@@ -1,18 +1,18 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { Skill } = require('../parser/skill').default;
-const fs = require('fs');
-const path = require('path');
-const config = require('./project-config');
-const parserlib = require('../parser/parserlib');
-const ProjectInfo = require('./project-info').default;
+import { Skill } from '../parser/skill';
+import fs from 'fs';
+import path from 'path';
+import config from './project-config';
+import parserlib from '../parser/parserlib';
+import ProjectInfo from './project-info';
 
-async function build(root, variant) {
+export async function build(root, variant) {
   parserlib.__resetLib();
 
   const jsonConfig = await config.loadConfig(root);
@@ -34,6 +34,6 @@ async function build(root, variant) {
   return skill;
 };
 
-module.exports = {
+export default {
   build
 };

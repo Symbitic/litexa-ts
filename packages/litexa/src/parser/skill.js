@@ -20,14 +20,14 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 import coffee from 'coffeescript';
 import testing from './testing';
-const { ParserError, formatLocationStart } = require("./errors").lib;
+const { ParserError, formatLocationStart } = require("./errors");
 import { default as sayCounter } from './sayCounter';
 import { default as MockDB } from './mockdb';
 import Files from './files';
 import litexaParser from './parser';
 const { _initPaths } = require('module').Module;
 
-const lib = require('./parserlib');
+const lib = require('./parserlib').default;
 
 const makeReferenceTester = function(litexaRoot, source) {
   let func;

@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./features/",
+    "noEmit": true,
+    "allowJs": true
+  },
+  "include": [
+    "./features/"
+  ],
+}

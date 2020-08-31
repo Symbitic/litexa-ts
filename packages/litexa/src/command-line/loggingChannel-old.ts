@@ -8,6 +8,22 @@ import chalk from 'chalk';
 import fs from 'fs';
 
 export default class LoggingChannel {
+  _hasPrefix: any;
+  options: any;
+  _canWriteToFileStreamValid: any;
+  _canWriteToFileStream: any;
+  _canWriteToLogStream: any;
+  logStream: any;
+  _logFile: any;
+  fs: any;
+  logPrefix: any;
+  _verbose: any;
+  includeRunningTime: any;
+  lastOutStreamTime: any;
+  lastFileTime: any;
+  startTime: any;
+  fileLogStream: any;
+
   get hasPrefix() {
     if (this._hasPrefix) {
       return this._hasPrefix;
@@ -90,7 +106,8 @@ export default class LoggingChannel {
       writer: this.logStream,
       method: 'log',
       writeCondition: writeCondition && this.canWriteToLogStream,
-      timeUpdated: 'lastOutStreamTime'
+      timeUpdated: 'lastOutStreamTime',
+      appendNewLine: undefined
     }, args));
 
     return this._write(Object.assign({
@@ -104,14 +121,19 @@ export default class LoggingChannel {
 
   log(line) {
     return this.write({
-      line
+      line,
+      writeCondition: undefined,
+      format: undefined,
+      now: undefined
     });
   }
 
   important(line) {
     return this.write({
       line,
-      format: chalk.inverse
+      writeCondition: undefined,
+      format: chalk.inverse,
+      now: undefined
     });
   }
 
@@ -120,21 +142,26 @@ export default class LoggingChannel {
     return this.write({
       line,
       writeCondition: this._verbose,
-      format: chalk.gray
+      format: chalk.gray,
+      now: undefined
     });
   }
 
   error(line) {
     return this.write({
       line,
-      format: chalk.red
+      format: chalk.red,
+      writeCondition: this._verbose,
+      now: undefined
     });
   }
 
   warning(line) {
     return this.write({
       line,
-      format: chalk.yellow
+      format: chalk.yellow,
+      writeCondition: this._verbose,
+      now: undefined
     });
   }
 
@@ -146,7 +173,9 @@ export default class LoggingChannel {
   }
 
   runningTime() {
-    return new Date() - this.startTime;
+    const a = new Date() as any;
+    const b = this.startTime;
+    return a - b;
   }
 
   // Private Methods
@@ -155,7 +184,7 @@ export default class LoggingChannel {
     if (timeNow == null) { timeNow = new Date(); }
 
     if (writeCondition) {
-      let deltaTime = undefined;
+      let deltaTime: number | undefined = undefined;
 
       if (this.includeRunningTime) {
         deltaTime = timeNow - this[timeUpdated];

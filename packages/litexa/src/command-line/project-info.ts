@@ -16,11 +16,41 @@ import { join, extname, relative } from 'path';
 import globalModulesPath from 'global-modules';
 import debug from 'debug';
 import LoggingChannel from './loggingChannel';
-import { name as _name, version } from '../../package.json';
 import lib from '../parser/parserlib';
+import { name as _name, version } from '../../package.json';
+
 const projectInfoDebug = debug('litexa-project-info');
 
-class ProjectInfo {
+export default class ProjectInfo {
+  variant: any;
+  doNotParseExtensions: any;
+  litexaRoot: any;
+  root: any;
+  logger: any;
+  DEPLOY: any;
+  deployments: any;
+  disableAssetReferenceValidation: any;
+  userAgent: any;
+  languages: any;
+  languagesRoot: any;
+  localization: any;
+  extensions: any;
+  extensionOptions: any;
+  name: any;
+  listOutputs: any;
+  inputs: any;
+  outputs: any;
+  plugins: any;
+
+  static createMock() {
+    const config = {
+      root: "--mockRoot",
+      name: "mockProject",
+      isMock: true
+    };
+    return new ProjectInfo({ jsonConfig: config, variant: "mockTesting" });
+  }
+
   constructor(...args) {
     const obj = args[0];
     const { jsonConfig } = obj;
@@ -50,7 +80,7 @@ class ProjectInfo {
     this.parseDirectory(jsonConfig);
   }
 
-  parseDirectory() {
+  parseDirectory(jsonConfig) {
     let f;
     if (!existsSync(this.litexaRoot) && (this.root !== '--mockRoot')) {
       throw new Error(`Cannot initialize ProjectInfo no litexa sub directory found at ${this.litexaRoot}`);
@@ -251,7 +281,7 @@ class ProjectInfo {
       return !codeExtensionsWhitelist.includes(extension) ? false : true;
     };
 
-    def.code.files = readdirSync(def.code.root)
+    (def.code.files as any) = readdirSync(def.code.root)
       .filter(f => codeFilter(f));
 
     const assetExtensionsWhitelist = [
@@ -285,7 +315,7 @@ class ProjectInfo {
 
         // Create a clone of our processor, so as not to override previous languages' inputs/outputs.
         proc = info.assetPipeline[procIndex];
-        const clone = {};
+        const clone: any = {};
         Object.assign(clone, proc);
 
         const name = clone.name ? clone.name : `${kind}[${procIndex}]`;
@@ -325,7 +355,7 @@ class ProjectInfo {
       const processDirectory = root => {
         projectInfoDebug(`processing asset dir ${root}`);
         return (() => {
-          const result1 = [];
+          const result1: any = [];
           for (f of Array.from(readdirSync(root))) {
             if (Array.from(fileBlacklist).includes(f)) { continue; }
 
@@ -341,7 +371,7 @@ class ProjectInfo {
 
             let processed = false;
             if (assetFilter(f)) {
-              def.assets.files.push(f);
+              (def.assets.files as any).push(f);
               processed = true;
             }
 
@@ -362,7 +392,9 @@ class ProjectInfo {
                 proc.inputs.push(f);
                 for (let o of Array.from(outputs)) {
                   proc.outputs.push(o);
-                  if ((Array.from(def.assets.files).includes(o)) || (Array.from(def.convertedAssets.files).includes(o))) {
+                  const a = (def.assets.files as any).includes(o);
+                  const b = (def.convertedAssets.files as any).includes(o)
+                  if (a || b) {
                     throw new Error(`Asset processor ${kind} would \
 produce a duplicate file ${o}. \
 Please resolve this before continuing by either \
@@ -371,7 +403,7 @@ have multiple asset processors that create \
 the same output.`
                     );
                   }
-                  def.convertedAssets.files.push(o);
+                  (def.convertedAssets.files as any).push(o);
                 }
               }
             }
@@ -379,7 +411,7 @@ the same output.`
             if (!processed) {
               result1.push(logger.warning(`Unsupported internally or by extensions, skipping asset: ${f}`));
             } else {
-              result1.push(undefined);
+              result1.push();
             }
           }
           return result1;
@@ -415,14 +447,3 @@ the same output.`
     return result;
   }
 }
-
-ProjectInfo.createMock = () => {
-  const config = {
-    root: "--mockRoot",
-    name: "mockProject",
-    isMock: true
-  };
-  return new ProjectInfo({ jsonConfig: config, variant: "mockTesting" });
-};
-
-export default ProjectInfo;

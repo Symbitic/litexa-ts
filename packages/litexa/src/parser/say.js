@@ -1,21 +1,21 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { parseFragment } = require('./parser');
-const { ParserError } = require('./errors');
-const {
+import { parseFragment } from './parser';
+import { ParserError } from './errors';
+import {
   replaceNewlineCharacters,
   isEmptyContentString,
   isFirstOrLastItemOfArray,
   dedupeNonNewlineConsecutiveWhitespaces,
   cleanTrailingSpaces,
   cleanLeadingSpaces
-} = require('./utils');
-const sayCounter = require('./sayCounter');
+} from './utils';
+import sayCounter from './sayCounter';
 
 class StringPart {
   constructor(text) {
@@ -55,9 +55,11 @@ class StringPart {
   toString() {
     return this.text;
   }
+
   toUtterance() {
     return this.text;
   }
+
   toLambda(options) {
     // escape quotes
     let str = this.text.replace(/"/g, '\"');
@@ -65,9 +67,11 @@ class StringPart {
     str = replaceNewlineCharacters(str, '\\n');
     return '"' + str + '"';
   }
+
   express(context) {
     return this.text;
   }
+
   toRegex() {
     let str = this.text;
     // escape regex control characters
@@ -77,12 +81,15 @@ class StringPart {
     str = replaceNewlineCharacters(str, '\\n');
     return `(${str})`;
   }
+
   toTestRegex() {
     return this.toRegex();
   }
+
   toTestScore() {
     return 10;
   }
+
   toLocalization() {
     return this.toString();
   }
@@ -771,7 +778,7 @@ class Say {
   }
 }
 
-const lib = {
+export default {
   StringPart,
   TagPart,
   DatabaseReferencePart,
@@ -782,9 +789,4 @@ const lib = {
   JavaScriptFragmentPart,
   AssetNamePart,
   Say
-};
-
-module.exports = {
-  lib,
-  ...lib
 };

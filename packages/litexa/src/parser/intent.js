@@ -6,7 +6,7 @@
  */
 
 const { Function, FunctionMap } = require('./function').lib;
-const { ParserError, formatLocationStart } = require('./errors').lib;
+const { ParserError, formatLocationStart } = require('./errors');
 const Utils = require('./utils').lib;
 
 const builtInIntents = [

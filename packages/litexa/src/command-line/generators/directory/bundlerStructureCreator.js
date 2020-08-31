@@ -7,7 +7,6 @@
 
 import { join } from 'path';
 import StructureCreator from './structureCreator';
-import '../../../getter.polyfill';
 
 /*
 * Directory Structure
@@ -55,47 +54,60 @@ import '../../../getter.polyfill';
 *
 */
 
-let libDir = undefined;
-let testDir = undefined;
-let commonDir = undefined;
+const commonDir = 'common';
+const libDir = 'lib';
+const testDir = 'test';
 
-class BundlerStructureCreator extends StructureCreator {
-  static initClass() {
-    libDir = 'lib';
-    testDir = 'test';
-    commonDir = 'common';
+export default class BundlerStructureCreator extends StructureCreator {
+  /*
+  libFolder: string;
+  testFolder: string;
+  libServicesFolder: string;
+  libComponentsFolder: string;
+  testServicesFolder: string;
+  testComponentsFolder: string;
+  */
 
-    // Getters and Setters
+  static get commonDir() {
+    return commonDir;
+  }
 
-    this.getter('libDirectory', function () {
-      if (this.libFolder) { return this.libFolder; }
-      return this.libFolder = join(this.rootPath, libDir);
-    });
+  static get libDir() {
+    return libDir;
+  }
 
-    this.getter('testDirectory', function () {
-      if (this.testFolder) { return this.testFolder; }
-      return this.testFolder = join(this.rootPath, testDir);
-    });
+  static get testDir() {
+    return testDir;
+  }
 
-    this.getter('libServicesDirectory', function () {
-      if (this.libServicesFolder) { return this.libServicesFolder; }
-      return this.libServicesFolder = join(this.libDirectory, 'services');
-    });
+  get libDirectory() {
+    if (this.libFolder) { return this.libFolder; }
+    return this.libFolder = join(this.rootPath, libDir);
+  }
 
-    this.getter('libComponentsDirectory', function () {
-      if (this.libComponentsFolder) { return this.libComponentsFolder; }
-      return this.libComponentsFolder = join(this.libDirectory, 'components');
-    });
+  get testDirectory() {
+    if (this.testFolder) { return this.testFolder; }
+    return this.testFolder = join(this.rootPath, testDir);
+  }
 
-    this.getter('testServicesDirectory', function () {
-      if (this.testServicesFolder) { return this.testServicesFolder; }
-      return this.testServicesFolder = join(this.testDirectory, 'services');
-    });
+  get libServicesDirectory() {
+    if (this.libServicesFolder) { return this.libServicesFolder; }
+    return this.libServicesFolder = join(this.libDirectory, 'services');
+  }
 
-    this.getter('testComponentsDirectory', function () {
-      if (this.testComponentsFolder) { return this.testComponentsFolder; }
-      return this.testComponentsFolder = join(this.testDirectory, 'components');
-    });
+  get libComponentsDirectory() {
+    if (this.libComponentsFolder) { return this.libComponentsFolder; }
+    return this.libComponentsFolder = join(this.libDirectory, 'components');
+  }
+
+  get testServicesDirectory() {
+    if (this.testServicesFolder) { return this.testServicesFolder; }
+    return this.testServicesFolder = join(this.testDirectory, 'services');
+  }
+
+  get testComponentsDirectory() {
+    if (this.testComponentsFolder) { return this.testComponentsFolder; }
+    return this.testComponentsFolder = join(this.testDirectory, 'components');
   }
 
   create() {
@@ -212,6 +224,3 @@ class BundlerStructureCreator extends StructureCreator {
     });
   }
 };
-BundlerStructureCreator.initClass();
-
-export default BundlerStructureCreator;

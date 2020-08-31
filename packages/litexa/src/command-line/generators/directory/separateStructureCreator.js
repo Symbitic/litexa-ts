@@ -7,7 +7,6 @@
 
 import { join } from 'path';
 import StructureCreator from './structureCreator';
-import '../../../getter.polyfill';
 
 /*
 * Directory Structure
@@ -40,20 +39,21 @@ import '../../../getter.polyfill';
 *
 */
 
-let separateFolder = undefined;
-let commonDir = undefined;
+const separateFolder = 'lib';
+const commonDir = 'common';
 
-class SeparateStructureCreator extends StructureCreator {
-  static initClass() {
-    separateFolder = 'lib';
-    commonDir = 'common';
+export default class SeparateStructureCreator extends StructureCreator {
+  static get separateFolder() {
+    return separateFolder;
+  }
 
-    // Getters and Setters
+  static get commonDir() {
+    return commonDir;
+  }
 
-    this.getter('separateFolder', function () {
-      if (this.separateDir) { return this.separateDir; }
-      return this.separateDir = join(this.rootPath, separateFolder);
-    });
+  get separateFolder() {
+    if (this.separateDir) { return this.separateDir; }
+    return this.separateDir = join(this.rootPath, separateFolder);
   }
 
   create() {
@@ -134,6 +134,3 @@ class SeparateStructureCreator extends StructureCreator {
     });
   }
 };
-SeparateStructureCreator.initClass();
-
-export default SeparateStructureCreator;

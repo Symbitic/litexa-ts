@@ -16,28 +16,27 @@
  * Note: the project name is assumed to be the same as the
  * directory name, unless explicitly specified in the config file.
  */
-
-const fs = require('fs');
-const path = require('path');
-const debug = require('debug');
-const { promisify } = require('util');
-const extensions = require('./fileExtensions').default;
-const searchReplace = require('./generators/searchReplace').default;
-const projectNameValidate = require('./generators/validators/projectNameValidator').default;
-const ts = require('typescript');
+import fs from 'fs';
+import path from 'path';
+import debug from 'debug';
+import ts from 'typescript';
+import { promisify } from 'util';
+import extensions from './fileExtensions';
+import searchReplace from './generators/searchReplace';
+import projectNameValidate from './generators/validators/projectNameValidator';
 
 const litexaDebug = debug('litexa');
 
 const stat = promisify(fs.stat);
 const readdir = promisify(fs.readdir);
 
-function writeDefault(location, language, name) {
+export function writeDefault(location: string, language: string, name: string) {
   litexaDebug(`name is: ${name}`);
 
   const extension = extensions[language];
   const filename = `litexa.config.${extension}`;
 
-  const writeFile = file => {
+  const writeFile = (file: string) => {
     const source = path.resolve(__dirname, '..', '..', 'templates', 'common', language, file);
 
     let data = fs.readFileSync(source, 'utf8');
@@ -59,7 +58,7 @@ function writeDefault(location, language, name) {
   return filename;
 };
 
-async function identifyConfigFileFromPath(location) {
+export async function identifyConfigFileFromPath(location: string) {
   // searches the given location and its ancestors for the first viable Litexa config file
   litexaDebug(`beginning search for a Litexa config file at ${location}`);
 
@@ -71,7 +70,7 @@ async function identifyConfigFileFromPath(location) {
   const stats = await stat(location);
   if (stats.isFile()) {
     if (!isCorrectFilename(location)) {
-      throw `The path ${location} is a file, but doesn't appear to point to a Litexa config file.`;
+      throw new Error(`The path ${location} is a file, but doesn't appear to point to a Litexa config file.`);
     }
     return location;
   }
@@ -91,10 +90,10 @@ async function identifyConfigFileFromPath(location) {
     return await identifyConfigFileFromPath(parent);
   }
 
-  throw `Failed to find a Litexa config file (litexa.config.js/json/coffee) anywhere in ${location} or its ancestors.`;
+  throw new Error(`Failed to find a Litexa config file (litexa.config.js/json/coffee) anywhere in ${location} or its ancestors.`);
 };
 
-async function loadConfig(atPath, skillNameValidate) {
+export async function loadConfig(atPath: string, skillNameValidate: any = null) {
   // Loads a project config file given a path, resolved by identifyConfigFileFromPath
 
   let config;
@@ -122,8 +121,9 @@ async function loadConfig(atPath, skillNameValidate) {
 
     config = require(configLocation);
     config.root = projectRoot;
-    throw `Couldn't parse the Litexa config file at ${configLocation}: ${err}`;
-  } catch (err) {}
+  } catch (err) {
+    throw new Error(`Couldn't parse the Litexa config file at ${configLocation}: ${err}`);
+  }
 
   if (!config.name) {
     config.name = path.basename(config.root);
@@ -148,7 +148,7 @@ async function loadConfig(atPath, skillNameValidate) {
   return config;
 };
 
-module.exports = {
+export default {
   loadConfig,
   writeDefault,
   identifyConfigFileFromPath

@@ -1,23 +1,30 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const lib = {};
+import errors from './errors';
+import jsonValidator from './jsonValidator';
+import dataTable from './dataTable';
+import testing from './testing';
+import variableReference from './variableReference';
+import say from './say';
+import card from './card';
+import func from './function';
+import assets from './assets';
+import soundEffect from './soundEffect';
+import intent from './intent';
+import state from './state';
+import monetization from './monetization';
 
-const errors = require('./errors');
-const jsonValidator = require('./jsonValidator');
-const dataTable = require('./dataTable');
-const testing = require('./testing');
+let lib = {};
 
-const resetLib = function() {
+export function resetLib() {
   for (let k in lib) {
     delete lib[k];
   }
-
-  lib.__resetLib = resetLib;
 
   const mergeLib = required => {
     for (let name in required.lib) {
@@ -25,20 +32,28 @@ const resetLib = function() {
       lib[name] = part;
     }
   };
+  const mergeLib2 = required => {
+    for (let name in required) {
+      const part = required[name];
+      lib[name] = part;
+    }
+  };
 
-  mergeLib(require('./errors'));
-  mergeLib(require('./jsonValidator'));
-  mergeLib(require('./dataTable'));
-  mergeLib(require('./testing'));
-  mergeLib(require('./variableReference'));
-  mergeLib(require('./say'));
-  mergeLib(require('./card'));
-  mergeLib(require('./function').default);
-  mergeLib(require('./assets'));
-  mergeLib(require('./soundEffect'));
-  mergeLib(require('./intent'));
-  mergeLib(require('./state'));
-  mergeLib(require('./monetization'));
+  lib.__resetLib = resetLib;
+
+  mergeLib2(errors);
+  mergeLib(jsonValidator);
+  mergeLib(dataTable);
+  mergeLib(testing);
+  mergeLib(variableReference);
+  mergeLib2(say);
+  mergeLib(card);
+  mergeLib(func);
+  mergeLib(assets);
+  mergeLib(soundEffect);
+  mergeLib(intent);
+  mergeLib(state);
+  mergeLib(monetization);
 
   // reset the static index of all utterances
   return lib.Intent.unregisterUtterances();
@@ -46,4 +61,4 @@ const resetLib = function() {
 
 resetLib();
 
-module.exports = lib;
+export default lib;

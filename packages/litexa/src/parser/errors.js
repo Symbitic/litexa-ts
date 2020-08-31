@@ -5,7 +5,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-class ParserError extends Error {
+export class ParserError extends Error {
   constructor(location, message) {
     super();
     this.location = location;
@@ -14,7 +14,7 @@ class ParserError extends Error {
   }
 };
 
-function formatLocationStart(location) {
+export function formatLocationStart(location) {
   if (location == null) {
     return "unknown location";
   }
@@ -30,12 +30,7 @@ function formatLocationStart(location) {
   }
 }
 
-const lib = {
+export default {
   ParserError,
   formatLocationStart
-};
-
-module.exports = {
-  lib,
-  ...lib
 };

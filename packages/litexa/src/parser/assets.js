@@ -6,7 +6,7 @@
  */
 
 const path = require('path');
-const { ParserError } = require('./errors').lib;
+const { ParserError } = require('./errors');
 
 class AssetName {
   constructor(location, name, type, skill, localFile) {

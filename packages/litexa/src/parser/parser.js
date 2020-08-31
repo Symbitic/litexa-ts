@@ -12,17 +12,20 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-let cached, e, hash, parser, source, sourceHash, sourcePEG;
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 const peg = require('pegjs');
 const crypto = require('crypto');
-const debug = require('debug')('litexa');
+const debug = require('debug');
 
+const debugLitexa = debug('litexa');
 const sourceFilename = `${__dirname}/litexa.pegjs`;
 const cacheFilename = `${__dirname}/litexa.pegjs.cached`;
+
+let cached, e, hash, parser, source, sourceHash, sourcePEG;
 let parserSourceCode = null;
+let fragmentParser = null;
 
 try {
   hash = crypto.createHash('md5');
@@ -33,14 +36,14 @@ try {
   cached = JSON.parse(fs.readFileSync(cacheFilename, 'utf8'));
   if (cached.hash === sourceHash) {
     parserSourceCode = cached.source;
-    debug("cached parser loaded");
+    debugLitexa("cached parser loaded");
   } else {
-    debug(`cached parser was state ${sourceHash} != ${cached.hash}`);
+    debugLitexa(`cached parser was state ${sourceHash} != ${cached.hash}`);
   }
 } catch (error) {
   e = error;
-  debug("no cached parser found");
-  debug(e);
+  debugLitexa("no cached parser found");
+  debugLitexa(e);
 }
 
 if (!parserSourceCode) {
@@ -57,7 +60,7 @@ try {
   parser = eval(parserSourceCode);
 } catch (error1) {
   e = error1;
-  debug("failed to eval parser");
+  debugLitexa("failed to eval parser");
   throw e;
 }
 
@@ -118,9 +121,8 @@ ${extensionName} is missing parser code`
   }
 
   const replacePlaceholder = function(placeholder, nameList) {
-    const block = Array.from(nameList).map((s) =>
-      "  / " + s);
-    return extSourcePEG = extSourcePEG.replace(placeholder, block.join('\n'));
+    const block = nameList.map(s => `  / ${s}`).join('\n');
+    extSourcePEG = extSourcePEG.replace(placeholder, block);
   };
 
   replacePlaceholder("  /* ADDITIONAL STATEMENTS */", statementNames);
@@ -137,7 +139,7 @@ ${extensionName} is missing parser code`
   try {
     extParser = eval(extParserSource);
   } catch (err) {
-    debug("failed to eval extended parser");
+    debugLitexa("failed to eval extended parser");
     throw e;
   }
 
@@ -148,8 +150,6 @@ ${extensionName} is missing parser code`
   return extParser;
 };
 
-
-let fragmentParser = null;
 module.exports.parseFragment = function(fragment, language) {
   if (fragmentParser == null) {
     source = fs.readFileSync(sourceFilename, 'utf8');
@@ -169,12 +169,13 @@ module.exports.parseFragment = function(fragment, language) {
     getExtensions() { return {}; }
   };
 
+  const parserlib = require('./parserlib').default;
+
   fragmentParser.parse(fragment, {
     skill,
-    lib: require('./parserlib'),
-    language: language != null ? language : 'default'
-  }
-  );
+    lib: parserlib,
+    language: language || 'default'
+  });
 
   return result;
 };

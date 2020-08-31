@@ -9,21 +9,23 @@ import { createReadStream, readFileSync, writeFileSync } from 'fs';
 import { parse, join } from 'path';
 import { sync } from 'mkdirp';
 import { createHash } from 'crypto';
-import { sync as _sync } from 'rimraf';
+import { sync as rimraf } from 'rimraf';
 import { identifyConfigFileFromPath } from './project-config';
 
-const createLitexaConfigSHA256 = configFile => new Promise((resolve, reject) => {
-  const shasum = createHash('sha256');
-  return createReadStream(configFile)
-    .on('data', chunk => shasum.update(chunk))
-    .on('end', () => resolve(shasum.digest('base64')))
-    .on('error', err => reject(err));
-});
+function createLitexaConfigSHA256(configFile): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const shasum = createHash('sha256');
+    return createReadStream(configFile)
+      .on('data', chunk => shasum.update(chunk))
+      .on('end', () => resolve(shasum.digest('base64')))
+      .on('error', err => reject(err));
+  });
+}
 
 async function run(options) {
   // nuke these directories if Litexa config has changed
   const locationsToWipe = [ '.deploy', '.test' ];
-  let currentHash = '';
+  let currentHash: string = '';
   let storedHash = '';
   let litexaProjectRoot = options.root;
   try {
@@ -46,7 +48,7 @@ async function run(options) {
 
   if (currentHash !== storedHash) {
     for (let location of locationsToWipe) {
-      _sync(location);
+      rimraf(location);
     }
   }
   sync(join(litexaProjectRoot, '.deploy'));

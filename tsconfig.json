@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "baseUrl": "src",
     "noImplicitAny" : false,
     "strictNullChecks": true,
@@ -16,5 +17,8 @@
       "es2015",
       "es2017"
     ]
-  }
+  },
+  "exclude": [
+    "./cacheCoverage.js"
+  ]
 }
