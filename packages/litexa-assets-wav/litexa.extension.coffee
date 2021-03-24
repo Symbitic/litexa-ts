@@ -55,8 +55,8 @@ exports.processFile = (info, options) ->
 
   stream = require 'stream'
   wavDecoder = require 'wav-decoder'
-  lame = require 'lame'
-  logger = info.logger
+  lame = require '@suldashi/lame'
+  logger = info.logger ? console
 
   match = info.assetName.match /(.*)\.wav$/i
 
@@ -135,7 +135,7 @@ exports.processFile = (info, options) ->
             data[i*2+1] = decoded.channelData[1][i]
 
         pcmStream = new stream.PassThrough()
-        pcmStream.end new Buffer(data.buffer)
+        pcmStream.end new Buffer.from(data.buffer)
 
         # run lame, collecting the results
         encoder = new lame.Encoder format

@@ -81,6 +81,7 @@ makeBaseRequest = (skill) ->
       System:
         device:
           deviceId: "someDeviceId"
+          supportedInterfaces: []
         user:
           userId: "amzn1.ask.account.stuff"
         application:
@@ -89,16 +90,19 @@ makeBaseRequest = (skill) ->
     version: "1.0"
   }
   device = skill.testDevice ? 'dot'
+  blockedInterfaces = skill.testBlockedInterfaces ? []
+  pushInterface = (interfaceName) =>
+    return if interfaceName in blockedInterfaces
+    req.context.System.device.supportedInterfaces[interfaceName] = {}
 
   switch device
     when 'dot', 'echo'
       dev = req.context.System.device
     when 'show'
       dev = req.context.System.device
-      dev.supportedInterfaces =
-        'Alexa.Presentation.APL': {}
-        'Alexa.Presentation.HTML': {}
-        Display: {}
+      pushInterface('Display')
+      pushInterface('Alexa.Presentation.APL')
+      pushInterface('Alexa.Presentation.HTML')
     else
       throw new Error "Unknown test device type #{device}"
 
@@ -236,6 +240,7 @@ collectSays = (skill, lambda) ->
 
   for stateName, state of skill.states
     state.startFunction?.forEachPart skill.testLanguage, collect
+    state.endFunction?.forEachPart skill.testLanguage, collect
 
     for intentName, intent of state.intents
       intent.startFunction?.forEachPart skill.testLanguage, collect
@@ -247,27 +252,6 @@ collectSays = (skill, lambda) ->
 
   return result
 
-
-grindSays = (language, allSays, line) ->
-  # try to categorize every part of this string into
-  # one of the say statements, anywhere in the skill
-  ctx = {
-    remainder: line
-    says: []
-  }
-
-  while ctx.remainder.length > 0
-    found = false
-    for s in allSays
-      match = s.part.matchFragment(language, ctx.remainder, true)
-      if match?
-        if match.offset == 0
-          found = true
-          ctx.remainder = match.reduced
-          ctx.says.push [line.indexOf(match.removed), match.part, match.removed]
-          break
-    return ctx unless found
-  return ctx
 
 
 class lib.ExpectedExactSay
@@ -298,6 +282,29 @@ class lib.ExpectedRegexSay
     regexp = new RegExp(@regex.expression, @regex.flags)
     unless test.match(regexp) or abbreviatedTest.match(regexp)
       throw new ParserError @location, "speech did not match regex `/#{@regex.expression}/#{@regex.flags}`"
+
+
+
+grindSays = (language, allSays, line) ->
+  # try to categorize every part of this string into
+  # one of the say statements, anywhere in the skill
+  ctx = {
+    remainder: line
+    says: []
+  }
+
+  while ctx.remainder.length > 0
+    found = false
+    for s in allSays
+      match = s.part.matchFragment(language, ctx.remainder, true)
+      if match?
+        if match.offset == 0
+          found = true
+          ctx.remainder = match.reduced
+          ctx.says.push [line.indexOf(match.removed), match.part, match.removed]
+          break
+    return ctx unless found
+  return ctx
 
 class lib.ExpectedSay
   # expect all say statements that concatenate into @line
@@ -512,7 +519,7 @@ class lib.ResponseGeneratingStep
       resultCallback ex, result
 
 class RequestStep extends lib.ResponseGeneratingStep
-  constructor: (@location, @name, @source) ->
+  constructor: (@location, @requestType, @source) ->
     super()
 
   isVoiceStep: true
@@ -520,9 +527,23 @@ class RequestStep extends lib.ResponseGeneratingStep
   run: ({ skill, lambda, context, resultCallback }) ->
     result = @makeResult()
     context.attributes = {}
-    result.intent = "LaunchRequest"
+
     event = makeBaseRequest( skill )
-    event.request = { type: @name }
+
+    if @requestType
+      # support for just generating an empty request with a given type
+      event.request = { type: @requestType }
+
+    if @source?
+      # support for loading a request from a file
+      unless skill.files[@source]
+        return resultCallback new ParserError @location, "couldn't find file #{@source} for this request"
+      event.request = skill.files[@source].contentForLanguage('default')
+
+    # try to fish out an intent name for the test report
+    # if there is one, otherwise show the request type
+    result.intent = event.request.intent?.name ? event.request.type
+
     result.event = event
     @processEvent { result, skill, lambda, context, resultCallback }
 
@@ -545,10 +566,11 @@ class VoiceStep extends lib.ResponseGeneratingStep
     super()
     @values = {}
     if values?
+      # the parser gives this to use an array of k/v pair arrays
       for v in values
         @values[v[0]] = { value:v[1] }
-    if @say?
-      for alt in @say.alternates
+    if @say?.alternates?.default?
+      for alt in @say.alternates.default
         for part, i in alt
           if part?.isSlot
             unless part.name of @values
@@ -679,16 +701,18 @@ class ResumeStateStep
 
 
 validateDirective = (directive, context) ->
-  validatorFunction = directiveValidators[directive.type]
+  validatorFunction = directiveValidators[directive?.type]
 
   unless validatorFunction?
     # no? Try the ones from any loaded extensions
-    validatorFunction = context.skill.directiveValidators[directive.type]
+    validatorFunction = context.skill.directiveValidators[directive?.type]
 
   unless validatorFunction?
     if context.skill.projectInfo?.directiveWhitelist?
-      return null if directive.type in context.skill.projectInfo?.directiveWhitelist
-    return [ "unknown directive type #{directive.type}" ]
+      return null if directive?.type in context.skill.projectInfo?.directiveWhitelist
+    if context.skill.projectInfo?.validDirectivesList?
+      return null if directive?.type in context.skill.projectInfo?.validDirectivesList
+    return [ "unknown directive type #{directive?.type}" ]
   try
     validator = new JSONValidator directive
     validatorFunction(validator)
@@ -991,8 +1015,11 @@ class lib.Test
             break
       success = false
     else if result.event
+      stateName = ""
+      for ident, vars of context.db.identities
+        stateName = vars['__currentState']
       state = "◖#{padStringWithChars({
-        str: context.attributes.state ? ""
+        str: stateName ? ''
         targetLength: skill.maxStateNameLength
         paddingChar: '-'
       })}◗"
@@ -1042,7 +1069,7 @@ class lib.Test
         for directive in result.directives
           index = output.directives.length
           output.directives.push directive
-          logs.push "                          [DIRECTIVE #{index}] #{directive.type}"
+          logs.push "                          [DIRECTIVE #{index}] #{directive?.type}"
           validationErrors = validateDirective(directive, context)
           if validationErrors
             for error in validationErrors
@@ -1075,6 +1102,9 @@ class lib.Test
       skill: skill
       captures: db.captures
       testContext: testContext
+
+    # reset this for each test
+    skill.testBlockedInterfaces = [];
 
     success = true
 

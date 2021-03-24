@@ -7,9 +7,11 @@
 
 { assert, expect } = require('chai')
 { match, spy, stub } = require('sinon')
+path = require('path')
 
 { collectUploadInfo
   createAssetSets
+  findAndRegisterFilesToUpload
   uploadAssetSet
   validateS3BucketName } = require('../../src/utils/s3Utils')
 
@@ -176,6 +178,10 @@ describe 'S3Utils', ->
           }
         }
       }
+
+      # the expectation is that filenames will respect local file system norms
+      for name, file of expectedS3Context.assets
+        file.sourceFilename = path.normalize file.sourceFilename
 
       collectUploadInfo({ s3Context, skillContext, logger: fakeLogger, md5Override: fakeMD5 })
       expect(s3Context).to.deep.equal(expectedS3Context)
@@ -460,6 +466,45 @@ describe 'S3Utils', ->
           }
         }
       )
+
+  describe '#findAndRegisterFilesToUpload()', ->
+    s3Context = {
+      baseLocation: "dummyBase"
+      assets: {}
+    }
+    languageInfo = {
+      default: {
+        assets: {
+          files: ['subdir\\image.png']
+          root: "dummyRoot"
+        }
+        convertedAssets: {
+          files: []
+          root: "dummyRoot"
+        }
+      }
+      en: {
+        assets: {
+          files: ['otherSubdir\\something.png']
+          root: "enDummyRoot"
+        }
+        convertedAssets: {
+          files: []
+          root: "dummyRoot"
+        }
+      }
+    }
+    it 'uploads asset subdirectory files in Windows', ->
+      findAndRegisterFilesToUpload({s3Context, languageInfo})
+      expect(Object.keys(s3Context.assets).length).to.equal(3)
+      asset = s3Context.assets["dummyBase/default/subdir/image.png"]
+      expect(asset).to.not.equal(undefined)
+      expect(asset.name.includes('\\')).to.equal(true)
+      expect(asset.sourceFilename.includes('\\')).to.equal(true)
+      asset = s3Context.assets["dummyBase/en/otherSubdir/something.png"]
+      expect(asset).to.not.equal(undefined)
+      expect(asset.name.includes('\\')).to.equal(true)
+      expect(asset.sourceFilename.includes('\\')).to.equal(true)
 
 
   describe '#uploadAssetSet()', ->

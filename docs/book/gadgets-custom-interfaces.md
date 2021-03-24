@@ -30,7 +30,7 @@ npm install --save @litexa/gadgets
 
 This should result in the following directory structure:
 
-```stdout
+```
 project_dir
 ├── litexa
 └── node_modules
@@ -199,7 +199,7 @@ function buildCustomDirective() {
   return {
     type: 'CustomInterfaceController.SendDirective',
     header: {
-      // some directive name that was whitelisted by the gadget
+      // some directive name that was registered by the gadget
       name: 'SupportedDirectiveName',
       // same as for event handlers, name of interface defined by the gadget
       namespace: 'Custom.MyGadget'

@@ -15,7 +15,7 @@
 
 fs = require 'fs'
 path = require 'path'
-globalModulesPath = require('global-modules')
+globalDirectories = require('global-dirs')
 debug = require('debug')('litexa-project-info')
 LoggingChannel = require './loggingChannel'
 
@@ -29,6 +29,7 @@ class ProjectInfo
     @logger = logger
     @DEPLOY = @deployments?[@variant]?.DEPLOY ? {}
     @disableAssetReferenceValidation = @deployments?[@variant]?.disableAssetReferenceValidation
+    @useSessionAttributesForPersistentStore = @deployments?[@variant]?.useSessionAttributesForPersistentStore ? false
 
     # Direct Public Side-Effect
     @parseDirectory jsonConfig
@@ -138,6 +139,7 @@ class ProjectInfo
       options = @extensionOptions[moduleName] ? {}
 
       @extensions[moduleName] = extension options, lib
+      @extensions[moduleName].__sourceFilename = extensionFile
       if @extensions[moduleName].language?.lib?
         for k, v of @extensions[moduleName].language.lib
           if k of lib
@@ -149,7 +151,7 @@ class ProjectInfo
       deployModules
       path.join @root, 'node_modules'
       path.join @root, 'modules'
-      globalModulesPath
+      globalDirectories.npm.packages
     ]
 
   parseLanguage: (root, lang) ->
@@ -168,7 +170,7 @@ class ProjectInfo
 
     return if @root == '--mockRoot'
 
-    fileBlacklist = [
+    fileExclusionList = [
       'package.json'
       'package-lock.json'
       'tsconfig.json'
@@ -180,7 +182,7 @@ class ProjectInfo
 
     # collect all the files in the litexa directory
     # as inputs for the litexa compiler
-    codeExtensionsWhitelist = [
+    codeFileExtensionTypes = [
       '.litexa'
       '.coffee'
       '.js'
@@ -192,32 +194,33 @@ class ProjectInfo
       return false unless fs.lstatSync(fullPath).isFile()
       return false if f[0] == '.'
       extension = path.extname f
-      return false unless extension in codeExtensionsWhitelist
+      return false unless extension in codeFileExtensionTypes
       return true
     def.code.files = ( f for f in fs.readdirSync(def.code.root) when codeFilter(f) )
 
-    assetExtensionsWhitelist = [
+    assetExtensionsToInclude = [
       '.png'
       '.jpg'
+      '.jpeg'
       '.svg'
       '.mp3'
-      '.otf'
       '.json'
-      '.jpeg'
       '.txt'
-      '.html'
-      '.css'
-      '.js'
-      '.map'
-      '.glb'
-      '.m4a'
-      '.mp4'
-      '.ico'
-      '.ogg'
-      '.unityweb'
     ]
 
+    if @additionalAssetExtensions?
+      for ext in @additionalAssetExtensions
+        assetExtensionsToInclude.push ext
+
+    if @deployments?[@variant]?.additionalAssetExtensions?
+      for ext in @deployments?[@variant]?.additionalAssetExtensions
+        assetExtensionsToInclude.push ext
+
     for kind, info of @extensions
+      if info.additionalAssetExtensions?
+        for ext in info.additionalAssetExtensions
+          assetExtensionsToInclude.push ext
+
       continue unless info.assetPipeline?
       for proc, procIndex in info.assetPipeline
         # @TODO: Validate processor here?
@@ -247,7 +250,7 @@ class ProjectInfo
         return false unless fs.lstatSync(fullPath).isFile()
         return false if f[0] == '.'
         extension = path.extname f
-        unless extension in assetExtensionsWhitelist
+        unless extension in assetExtensionsToInclude
           return false
         return true
 
@@ -256,7 +259,7 @@ class ProjectInfo
       processDirectory = (root) ->
         debug "processing asset dir #{root}"
         for f in fs.readdirSync(root)
-          continue if f in fileBlacklist
+          continue if f in fileExclusionList
 
           f = path.join root, f
           stat = fs.statSync f

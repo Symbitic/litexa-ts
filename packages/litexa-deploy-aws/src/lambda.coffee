@@ -245,7 +245,7 @@ packZipFile = (context, logger, lambdaContext) ->
         zipper.writeZip lambdaContext.zipFilename
 
       zipLog = path.join context.deployRoot, 'zip.out.log'
-      fs.writeFileSync zipLog, stdout
+      fs.writeFileSync zipLog, stdout ? ''
       zipLog = path.join context.deployRoot, 'zip.err.log'
       fs.writeFileSync zipLog, "" + err + stderr
       if err?
@@ -565,6 +565,11 @@ endLambdaDeployment = (context, logger, lambdaContext) ->
 
 
 ensureDynamoTable = (context, logger, lambdaContext) ->
+  unless context.enablePersistentStore
+    logger.log "skipping dynamo table, skill does not require persistent store (probably set to use session attributes?)"
+    context.dynamoTableName = "NO_TABLE_DEPLOYED"
+    return
+
   context.dynamoTableName = [
     context.projectInfo.name
     context.projectInfo.variant

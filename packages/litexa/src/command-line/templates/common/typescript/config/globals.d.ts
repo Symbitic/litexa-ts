@@ -49,6 +49,7 @@ interface UploadParams {
 
 interface Deployment {
     module: string;
+    useSessionAttributesForPersistentStore?: boolean;
     askProfile: string;
     awsProfile: string;
     lambdaConfiguration?: LambdaSettings;
@@ -60,12 +61,16 @@ interface Deployment {
     DEPLOY?: DeploymentVariables;
     disableAssetReferenceValidation?: boolean;
     overrideAssetsRoot?: string;
+    additionalAssetExtensions?: Array<string>; 
 }
 
 interface Configuration {
     name: string;
+    useSessionAttributesForPersistentStore?: boolean;
     deployments: DeploymentCollection;
-    plugins: PluginCollection; // Per Environment Option?
+    plugins?: PluginCollection; // Per Environment Option?
+    additionalAssetExtensions?: Array<string>; 
+    validDirectivesList?: Array<string>;
 }
 
 /*

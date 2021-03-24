@@ -262,7 +262,7 @@ Assets will be deployed to subdirectories of your bucket, isolating
 specific deployments of specific projects from each other, copying
 the contents of your `litexa/assets` folder to the following location:
 
-```stdout
+```
 https://s3.{REGION}.amazonaws.com/{BUCKETNAME}/{SKILLNAME}/{DEPLOYMENTTARGET}/
 ```
 
@@ -279,7 +279,7 @@ with the assets in the top level going into the `default` folder. So if you have
 Litexa project named `CatsVsCucumbers` and you're deploying the `development` target,
 your project folder will look like this locally:
 
-```stdout
+```
 .
 ├── litexa
 |   ├── assets
@@ -294,7 +294,7 @@ your project folder will look like this locally:
 
 And your S3 bucket would look like this:
 
-```stdout
+```
 .
 ├── CatsVsCucumbers
 |   └── development
@@ -664,6 +664,50 @@ are executing tests or deploying the skill for. Please see [DEPLOY variables](
 
 Please see the [Monetization chapter](/book/monetization.html).
 
+## Switching The Persistent Store to Session Attributes Instead
+
+While most skills usually need to store some data in between sessions, and therefore end
+up needing an online persistent store one way or another, some skills definitely don't
+need to store anything between sessions at all, and so don't need to incur any online
+database costs. In this case, you can switch the Litexa persistent store to use Alexa's
+session attributes instead. Modify your Litexa config file to indicate you'd like
+this behavior.
+
+```json
+{
+    "name": "Project Name",
+    "useSessionAttributesForPersistentStore": true,
+    "deployments": {}
+}
+```
+
+You can also override this behavior per-deployment, opting perhaps to only disable
+permanent storage for test deployments.
+
+```json
+{
+    "name": "Project Name",
+    "deployments": {
+      "testing": {
+        "useSessionAttributesForPersistentStore": true,
+      }
+    }
+}
+```
+
+Please note that this option modifies the scope of @variables such that
+they will still store data in between *interaction turns*, but only until
+the skill quits. The next time the skill launches, all @data will be lost.
+
+It is also important to note that switching to sessionAttributes limits the size
+of your persistent storage in accordance with the limitations of sessionAttributes,
+namely that your total response size, that is to say all your persistent variables,
+plus any speech, reprompts, directives, and such, cannot exceed 24kb at any given
+turn.
+See [the ASK documentation on Response Format](https://developer.amazon.com/en-US/docs/alexa/custom-skills/request-and-response-json-reference.html#response-format)
+for more information
+
+
 ## Extra Note: Including `production` in the Deployment Target Name
 
 There is a special condition on deployment target names. If the name does *not*
@@ -684,7 +728,29 @@ See [DynamoDB Capacity Modes](
 ) for more information.
 :::
 
-## Relevant Resources
+## Adding New Filetypes to the Assets Upload
+
+Litexa filters the kinds of files it will deploy from your assets directory,
+rather than uploading them all. You can add to this filter by specifying additional
+file extensions in your Litexa configuration file. Just specify the extension
+in an array, each beginning with the period.
+You can specify this key on both the root configuration object, as well as
+add more in each specific deployment.
+
+```json
+{
+  "name": "my project name",
+  "deployments": {
+    "development": {
+      "additionalAssetExtensions": [".test"]
+    }
+  },
+  "additionalAssetExtensions": [".csv", ".data"]
+}
+```
+
+
+## Additional Resources
 
 * [AWS permissions](/book/appendix-aws-permissions.html) for setting up your IAM user with the
 required permissions.

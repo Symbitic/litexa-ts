@@ -1,4 +1,4 @@
-# State Management
+# State Management and Intent Routing
 
 ## Why State Management?
 
@@ -106,7 +106,7 @@ Each handler will completely finish before any other handler can
 run, and each handler will completely finish before a skill returns
 a response. This means that a Litexa skill, for a given user, will
 only ever be in *one state at a time*, and that the code can determine
-where to resume the skill by storing the name of the state we last
+where to resume the skill by storing just the name of the state we last
 stopped at.
 :::
 
@@ -172,9 +172,13 @@ Once you are comfortable with the role of the `LISTEN microphone`
 statement, you may drop it entirely: a handler that does not
 specify an ending will default to ending with `LISTEN microphone`!
 
+
+### When does a state transition happen?
+
 It's important to note that while the three statements we've
-learned here determine how a handler ends, they do not have to
-be the last statement in a handler. For example:
+described here determine what happens when a handler ends, they 
+do not themselves terminate the handler, nor are their 
+effects immediate. For example:
 
 ```coffeescript
 askAboutSomething
@@ -197,6 +201,74 @@ correctAnswer
 incorrectAnswer
   say "I'm afraid that's the wrong answer"
 ```
+
+In the above sample, the order of speech if the user answered
+correctly will be: *"you said $city, <...1s> That's the right answer!"* 
+because the transitions don't happen until *after the handler 
+is complete*.
+
+You may want to read `->` as *queue a state transition* rather 
+than a *change state now* function. The statement could be 
+replaced before the end of the handler, or even recinded if an
+END statement is encountered after it. This is an important part
+of the design of the state machine, and produces the following 
+effects: 
+
+* there is only ever the active state, there is no stack of 
+  states to return to. As such, there are no restrictions on 
+  the topology of of the state graph, a set of states can 
+  (and often do) sit in one or more interlocking infinite 
+  loops, a requirement for open ended interaction.
+
+* states are not responsible for what happens downstream, and 
+  have no parent state to consider. Any state in a loop can 
+  choose to break it, for instance, without consequence to the
+  integrity of the state machine. This also means global code
+  can choose to transition anywhere in the state machine without
+  unwinding a call stack first.
+
+* there are no side effects from the execution of other handlers,
+  during the execution of a single handler. After entering a state,
+  the exit handler for a state will always be run before any 
+  other state's code is run. If this were not the case, given that
+  any handler can prompt the next turn with `LISTEN`, 
+  supporting mid handler execution of other state's code could 
+  mean that that one or more dialog turns could have happened during 
+  the handler; an intent handler could find itself no 
+  longer handling that intent!
+
+Simplifying this underlying primive it a key part of the Litexa 
+design philosophy, with the intention of making easy to understand
+promises on how to reason about a program's execution: at any given
+moment the current position of the skill is only ever in one state,
+and only the code in that state will decide what happens next.
+
+It's entirely possible though, to build more complexity on top of 
+these primitives. Things to consider:
+
+* Business logic is often better expressed in your code language 
+  of choice, e.g. JavaScript. If you need an immediate effect 
+  mid handler, is it something that belongs in code?
+* States can be useful as just combinatorial flow paths, they 
+  don't have to reflect request/response stopping points. If you 
+  find yourself needing an immediate effect mid handler, could you 
+  perhaps split the handler up into a series of states to 
+  transition between?
+* You can service return paths and future branching using global 
+  variables and conditionals. This pattern shows up in "aside"
+  flows, e.g. asking for help where you may transition to a series
+  of help states, then want to "come back" to what you were doing.
+  You could maintain a `@currentActivity` variable at all times, and 
+  then write a `returnToCurrentActivity` state that knows how to switch
+  routing based on it. This would let you "interrupt" a 
+  current activity at any time, and then "blindly" return to the 
+  current activity from anywhere.
+
+::: tip Note
+The three state transitions statements `->`, `END`, `LISTEN` all 
+overwrite each other, e.g. you can issue an `END` after a `->` in the 
+same state, and you'll effectively have cancelled the transition.
+:::
 
 ## Intent Handlers
 
@@ -261,11 +333,25 @@ askCombo
     -> doubleAttack
 ```
 
-Finally, as Alexa will dutifully recognize any utterance in
-your language at any time, a skill must be prepared to handle
-any intent while waiting in any state. To capture intents
-you don't expect, you can use the `otherwise` statement.
+Where you have utterances that are permutations of a single
+grammar, you can use inline alternation to generate them. You can
+mix and match inline alternation with the `or` statement to compose
+a full intent.
 
+```coffeescript
+idline
+  when AttackEnemy
+    or "swing (my|the) (weapon|sword) (at the enemy|)"
+    or "(attack|kill) the enemy"
+    # this produces 10 utterances, including "swing my sword"
+    # "kill the enemy", and "swing the weapon at the enemy"
+```
+
+
+Finally, as Alexa will dutifully recognize any utterance across
+your entire language model at any time, a skill must be prepared
+to handle any intent while waiting in any state. To capture intents
+you don't expect for a given state, you can use the `otherwise` statement.
 Given that we're not distinguishing between which intent
 is coming in for the state, it's usually best to treat the
 otherwise case as a failure to understand the player's actual
@@ -313,7 +399,7 @@ idling
 Here we have state that defines a single intent, with a single
 slot named `$thing`. We define `$thing` as one of a list of
 possible words: rope, bird, or cage. In the handler, we can use
-the same $thing and assume it contain whatever the user said.
+the same $thing and assume it contains whatever the user said.
 
 :::warning Beware Large Slots!
 Alexa does not guarantee that the word that comes
@@ -441,3 +527,57 @@ function answerSlots(skill, language){
 
 exports.answerSlots = answerSlots;
 ```
+
+### Oneshot Intents
+
+A "oneshot" is when an Alexa user bundles an intent into their 
+launch utterance, e.g. *"Alexa, ask The Great Psychic to read runes"*.
+In the case where the user has a *"The Great Psychic"* skill enabled, 
+it would get launched, and immediately presented with its *"read runes"* 
+intent as part of the same request.
+
+Normally, the Litexa flow is to deliver any incoming intents into
+the currently active skill, then follow any state transitions running
+exit and entry handlers, until a response is triggered, and then 
+wait for the next incoming intent.
+
+In the case of a oneshot intent, there is no current state yet, so 
+Litexa will initialize the session by running the `launch` state's entry 
+handler *before* processing the incoming intent. This lets a skill 
+keep all its session initialization code in one place. Note, this means
+that you can redirect skill flow in the intent handler. In the following
+example, the skill normally goes to state `askForActivity` at launch
+but on receiving `READING_INTENT` will go to `readRunes` instead.
+
+```coffeescript
+launch 
+  # this code always runs at skill launch
+  say "Welcome to the Great Psychic!"
+
+  # by default we'd usually do this transition at a skill launch
+  -> askForActivity
+
+  when "read runes"
+    # this code runs if launch also had the intent
+    # this state transition overrides the one above, as intent 
+    # handlers always come after the entry handler 
+    -> readRunes
+
+  otherwise 
+    # we'll acknowledge we (mis)heard something here, but otherwise
+    # continue with the standard flow
+    say "I didn't understand that."
+
+  # code in the exit handler would be run no matter which way we go
+
+
+askForActivity
+  say "What should we do next? I could start a seance, or perhaps
+    read the runes?"
+
+readRunes
+  soundEffect runes-clacking.mp3
+  say "Oh, how interesting!"
+  # etc
+```
+

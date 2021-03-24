@@ -1,6 +1,6 @@
 {
   "name": "@litexa/core",
-  "version": "0.5.0",
+  "version": "0.7.3",
   "description": "Litexa, a programming language for writing Alexa skills",
   "bin": {
     "litexa": "src/command-line/main.js"
@@ -28,12 +28,11 @@
   "license": "Apache-2.0",
   "dependencies": {
     "chalk": "2.4.2",
-    "chokidar": "2.1.0",
-    "coffeescript": "2.3.2",
+    "chokidar": "^3.0.0",
+    "coffeescript": "^2.5.0",
     "commander": "2.19.0",
-    "cson-parser": "4.0.1",
     "debug": "4.1.1",
-    "global-modules": "2.0.0",
+    "global-dirs": "2.0.1",
     "inquirer": "6.2.2",
     "marked": "0.8.0",
     "mkdirp": "1.0.3",
