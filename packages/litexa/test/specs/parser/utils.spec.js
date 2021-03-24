@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-import { lib as Utils } from '../../../src/parser/utils';
+import * as Utils from '../../../src/parser/utils';
 import { assert, expect } from 'chai';
 
 describe('performs string manipulation and checking functions', () => {
@@ -22,7 +22,7 @@ describe('performs string manipulation and checking functions', () => {
   });
 
   it('indicates if the given index is the first or last index of the given array', () => {
-    const someArr = [500,12,'fish','cat'];
+    const someArr = [ 500, 12, 'fish', 'cat' ];
     assert(Utils.isFirstOrLastItemOfArray(0, someArr), 'first index returns true');
     assert(!Utils.isFirstOrLastItemOfArray(1, someArr), 'idx in the middle returns false');
     assert(!Utils.isFirstOrLastItemOfArray(-2, someArr), 'negative idx returns false');

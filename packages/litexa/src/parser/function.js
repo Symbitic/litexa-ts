@@ -265,7 +265,7 @@ export class IfCondition {
   }
 
   pushCode(line) {
-    this.startFunction = this.startFunction != null ? this.startFunction : new Func;
+    this.startFunction = this.startFunction != null ? this.startFunction : new Function;
     return this.startFunction.pushLine(line);
   }
 
@@ -315,7 +315,7 @@ export class ElseCondition {
   }
 
   pushCode(line) {
-    this.startFunction = this.startFunction != null ? this.startFunction : new Func;
+    this.startFunction = this.startFunction != null ? this.startFunction : new Function;
     return this.startFunction.pushLine(line);
   }
 
@@ -367,7 +367,7 @@ export class ForStatement {
   }
 
   pushCode(line) {
-    this.startFunction = this.startFunction != null ? this.startFunction : new Func;
+    this.startFunction = this.startFunction != null ? this.startFunction : new Function;
     return this.startFunction.pushLine(line);
   }
 
@@ -534,7 +534,7 @@ export class SwitchCase {
   }
 
   pushCode(line) {
-    this.startFunction = this.startFunction != null ? this.startFunction : new Func;
+    this.startFunction = this.startFunction != null ? this.startFunction : new Function;
     return this.startFunction.pushLine(line);
   }
 
@@ -722,7 +722,7 @@ export class SetResponseSpacing {
   }
 };
 
-export class Func {
+export class Function {
   constructor() {
     this.languages = {};
   }
@@ -824,12 +824,12 @@ export class FunctionMap {
   constructor() {
     this.currentName = '__';
     this.functions = {};
-    this.functions[this.currentName] = new Func;
+    this.functions[this.currentName] = new Function;
   }
 
   setCurrentName(name) {
     if (!(name in this.functions)) {
-      this.functions[name] = new Func;
+      this.functions[name] = new Function;
     }
     return this.currentName = name;
   }
@@ -873,37 +873,4 @@ export class FunctionMap {
     }
     return result;
   }
-};
-
-export const lib = {
-  EvaluateExpression,
-  Expression,
-  UnaryExpression,
-  BinaryExpression,
-  LocalExpressionCall,
-  DBExpressionCall,
-  IfCondition,
-  ElseCondition,
-  ForStatement,
-  SwitchStatement,
-  SwitchAssignment,
-  SwitchCase,
-  SetSetting,
-  DBAssignment,
-  WrapClass,
-  DBTypeDefinition,
-  LocalDeclaration,
-  LocalVariableAssignment,
-  LocalVariableReference,
-  SlotVariableAssignment,
-  Directive,
-  RecordMetric,
-  SetResponseSpacing,
-  Function: Func,
-  FunctionMap
-};
-
-export default {
-  lib,
-  ...lib
 };

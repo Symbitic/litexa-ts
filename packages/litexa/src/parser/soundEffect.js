@@ -5,9 +5,8 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { ParserError } = require('./errors');
-
-const sayCounter = require('./sayCounter');
+import { ParserError } from './errors';
+import sayCounter from './sayCounter';
 
 const literalRegex = line => line
   .replace(/\./g, '\\.')
@@ -15,7 +14,7 @@ const literalRegex = line => line
   .replace(/\\/g, '\\')
   .replace(/\-/g, '\\-');
 
-class SoundEffect {
+export class SoundEffect {
   constructor(location, assetName) {
     this.location = location;
     this.alternates = [assetName];
@@ -96,7 +95,7 @@ class SoundEffect {
   }
 };
 
-class PlayMusic {
+export class PlayMusic {
   constructor(location, assetName) {
     this.location = location;
     this.assetName = assetName;
@@ -116,7 +115,7 @@ class PlayMusic {
   }
 };
 
-class StopMusic {
+export class StopMusic {
   constructor(location) {
     this.location = location;
     this.toString = 'stopMusic';
@@ -129,15 +128,4 @@ class StopMusic {
   collectRequiredAPIs(apis) {
     return apis['AUDIO_PLAYER'] = true;
   }
-};
-
-const lib = {
-  SoundEffect,
-  PlayMusic,
-  StopMusic,
-};
-
-module.exports = {
-  lib,
-  ...lib
 };

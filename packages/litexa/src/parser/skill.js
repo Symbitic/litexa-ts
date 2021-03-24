@@ -15,17 +15,16 @@
  */
 
 import fs from 'fs';
-
 import path from 'path';
 import mkdirp from 'mkdirp';
 import coffee from 'coffeescript';
 import testing from './testing';
-const { ParserError, formatLocationStart } = require("./errors");
-import { default as sayCounter } from './sayCounter';
-import { default as MockDB } from './mockdb';
+import sayCounter from './sayCounter';
+import MockDB from './mockdb';
 import Files from './files';
 import litexaParser from './parser';
-const { _initPaths } = require('module').Module;
+import { ParserError, formatLocationStart } from './errors';
+import { Module } from 'module';
 
 const lib = require('./parserlib').default;
 
@@ -35,7 +34,7 @@ const makeReferenceTester = function(litexaRoot, source) {
     // build a closure that can check for the existence of a symbol
     // within the main body of the inline code closure
     process.env.NODE_PATH = path.join(litexaRoot, 'node_modules');
-    _initPaths();
+    Module._initPaths();
     func = eval(`\
 (function() {
   ${source}
@@ -1058,7 +1057,7 @@ escapeSpeech = function(line) {
 
     try {
       process.env.NODE_PATH = path.join(testContext.litexaRoot, 'node_modules');
-      _initPaths();
+      Module._initPaths();
 
       if ((this.projectInfo != null ? this.projectInfo.testRoot : undefined) != null) {
         fs.writeFileSync((path.join(this.projectInfo.testRoot, 'test.js')), this.lambdaSource, 'utf8');
@@ -1130,7 +1129,7 @@ escapeSpeech = function(line) {
       for (name in this.files) {
         file = this.files[name];
         if (file.isCode && (file.fileCategory === 'test')) {
-          test = new testing.lib.CodeTest(file);
+          test = new testing.CodeTest(file);
           if (!focusTest(file.filename(), null)) {
             test.filters = options.focusedFiles != null ? options.focusedFiles : null;
           }

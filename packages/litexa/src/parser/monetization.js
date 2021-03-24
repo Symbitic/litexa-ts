@@ -53,14 +53,3 @@ export class UpsellInSkillProductStatement {
     return this.attributes[key] = value;
   }
 };
-
-const lib = {
-  BuyInSkillProductStatement,
-  CancelInSkillProductStatement,
-  UpsellInSkillProductStatement
-};
-
-export default {
-  lib,
-  ...lib
-};

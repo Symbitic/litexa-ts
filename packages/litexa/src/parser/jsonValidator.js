@@ -13,9 +13,9 @@ class ValidationError {
   }
 
   toString() {
-    if (typeof(this.value) === 'string') {
+    if (typeof (this.value) === 'string') {
       return `${this.parameter}: '${this.value}'; ${this.message}`;
-    } else if (typeof(this.value) === 'object') {
+    } else if (typeof (this.value) === 'object') {
       return `${this.parameter}: ${JSON.stringify(this.value)}; ${this.message}`;
     } else {
       return `${this.parameter}: ${this.value}; ${this.message}`;
@@ -23,12 +23,11 @@ class ValidationError {
   }
 }
 
-
-const formatParameter = function(p) {
+const formatParameter = function (p) {
   if (p === '') {
     return '';
   }
-  if (typeof(p) === 'number') {
+  if (typeof (p) === 'number') {
     return `[${p}]`;
   }
   p = '' + p;
@@ -38,7 +37,7 @@ const formatParameter = function(p) {
   return `.${p}`;
 };
 
-class JSONValidator {
+export class JSONValidator {
   // This class is  designed to discover and record problems with a JSON object
   constructor(jsonObject) {
     this.jsonObject = jsonObject;
@@ -56,7 +55,8 @@ class JSONValidator {
     this.prefixStack.push(prefix);
     this.prefix = ((() => {
       const result = [];
-       for (p of Array.from(this.prefixStack)) {         result.push(formatParameter(p));
+      for (p of Array.from(this.prefixStack)) {
+        result.push(formatParameter(p));
       }
       return result;
     })()).join('');
@@ -69,7 +69,8 @@ class JSONValidator {
     this.prefixStack.pop();
     return this.prefix = ((() => {
       const result1 = [];
-       for (p of Array.from(this.prefixStack)) {         result1.push(formatParameter(p));
+      for (p of Array.from(this.prefixStack)) {
+        result1.push(formatParameter(p));
       }
       return result1;
     })()).join('');
@@ -107,7 +108,7 @@ class JSONValidator {
       this.errors.push(new ValidationError(loc, `expected an object with parameters [${parameters.join(', ')}]`));
       return;
     }
-    if (typeof(parameters) === 'string') {
+    if (typeof (parameters) === 'string') {
       if (!(parameters in value)) {
         return this.fail(parameters, "missing required parameter");
       }
@@ -144,7 +145,7 @@ class JSONValidator {
 
   integerBounds(parameter, min, max) {
     const [loc, value] = Array.from(this.getValue(parameter));
-    if ((value == null) || (typeof(value) !== 'number') || (Math.floor(value) !== value)) {
+    if ((value == null) || (typeof (value) !== 'number') || (Math.floor(value) !== value)) {
       this.errors.push(new ValidationError(loc, `should be an integer between ${min} and ${max}, inclusive`, value));
       return;
     }
@@ -167,7 +168,7 @@ class JSONValidator {
 
   boolean(parameter) {
     const [loc, value] = Array.from(this.getValue(parameter));
-    if (typeof(value) !== 'boolean') {
+    if (typeof (value) !== 'boolean') {
       return this.errors.push(new ValidationError(loc, "should be true or false", value));
     }
   }
@@ -193,13 +194,4 @@ class JSONValidator {
   toString() {
     return this.errors.join('\n');
   }
-};
-
-const lib = {
-  JSONValidator
-};
-
-module.exports = {
-  lib,
-  ...lib
 };

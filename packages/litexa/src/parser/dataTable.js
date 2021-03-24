@@ -11,7 +11,7 @@ function stripWhiteSpace(str) {
  return str ? str.replace(whiteSpaceRegex, '').replace(/\s/g, '\u00A0') : '';
 };
 
-class DataTable {
+export class DataTable {
   constructor(name, schema) {
     this.name = name;
     this.schema = schema;
@@ -45,13 +45,4 @@ class DataTable {
     output.push(`dataTables['${this.name}'] = [\n  ${lines}\n];`);
     return output.push(`Object.setPrototypeOf( dataTables['${this.name}'], DataTablePrototype );`);
   }
-};
-
-const lib = {
-  DataTable
-};
-
-module.exports = {
-  lib,
-  ...lib
 };

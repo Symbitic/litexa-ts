@@ -1,14 +1,14 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const path = require('path');
-const { ParserError } = require('./errors');
+import path from 'path';
+import { ParserError } from './errors';
 
-class AssetName {
+export class AssetName {
   constructor(location, name, type, skill, localFile) {
     this.location = location;
     this.name = name;
@@ -178,7 +178,7 @@ obvious way of being expressed in SSML, and so can't be tested`
   }
 };
 
-class FileFunctionReference {
+export class FileFunctionReference {
   constructor(location, filename, functionName) {
     this.location = location;
     this.filename = filename;
@@ -187,7 +187,7 @@ class FileFunctionReference {
   }
 };
 
-function parseJsonFile(location, filename, skill) {
+export function parseJsonFile(location, filename, skill) {
   const lang = (location != null ? location.language : undefined) != null ? (location != null ? location.language : undefined) : 'default';
   const jsonPath = path.join(skill.projectInfo.languages[`${lang}`].code.root, filename);
 
@@ -198,14 +198,4 @@ function parseJsonFile(location, filename, skill) {
 a path relative to the litexa folder.`
     );
   }
-};
-
-const lib = {
-  AssetName,
-  FileFunctionReference,
-  parseJsonFile
-};
-
-module.exports = {
-  lib
 };

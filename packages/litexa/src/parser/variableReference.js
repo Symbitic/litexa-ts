@@ -5,7 +5,7 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-class VariableReference {
+export class VariableReference {
   constructor(base, tail) {
     this.base = base;
     this.tail = tail;
@@ -49,7 +49,7 @@ class VariableReference {
   }
 };
 
-class VariableArrayAccess {
+export class VariableArrayAccess {
   constructor(index) {
     this.index = typeof(index) === 'string' ? `'${index}'` : index;
   }
@@ -70,7 +70,7 @@ class VariableArrayAccess {
   }
 };
 
-class VariableMemberAccess {
+export class VariableMemberAccess {
   constructor(name) {
     this.name = name;
   }
@@ -89,15 +89,4 @@ class VariableMemberAccess {
     }
     return obj[this.name];
   }
-};
-
-const lib = {
-  VariableReference,
-  VariableArrayAccess,
-  VariableMemberAccess,
-};
-
-module.exports = {
-  lib,
-  ...lib
 };

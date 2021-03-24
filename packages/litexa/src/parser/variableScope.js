@@ -5,11 +5,11 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { ParserError, formatLocationStart } = require('./errors');
+import { ParserError, formatLocationStart } from './errors';
 
 // blacklist a set of references we know we don't want shadowed
 // anywhere, or rather know we want to allow access to
-const protectedNames = ['context'];
+const protectedNames = [ 'context' ];
 
 class Scope {
   constructor(location, name, parent) {
@@ -106,7 +106,7 @@ class Scope {
   }
 };
 
-class VariableScopeManager {
+export class VariableScopeManager {
   constructor(location, name) {
     // default root scope
     this.currentScope = new Scope(location, name, null);
@@ -147,8 +147,4 @@ class VariableScopeManager {
   checkAccess(location, name) {
     return this.currentScope.checkAccess(location, name);
   }
-};
-
-module.exports = {
-  VariableScopeManager
 };

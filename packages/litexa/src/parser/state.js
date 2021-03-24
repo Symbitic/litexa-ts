@@ -5,12 +5,12 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { Function } = require('./function').lib;
-const { Intent, FilteredIntent } = require('./intent').lib;
-const { ParserError } = require('./errors');
-const { VariableScopeManager } = require('./variableScope');
+import { Function } from './function';
+import { Intent, FilteredIntent } from './intent';
+import { ParserError } from './errors';
+import { VariableScopeManager } from './variableScope';
 
-class Transition {
+export class Transition {
   constructor(name, stop) {
     this.name = name;
     this.stop = stop;
@@ -32,7 +32,7 @@ class Transition {
   }
 };
 
-class HandoffIntent {
+export class HandoffIntent {
   constructor(name) {
     this.name = name;
   }
@@ -49,7 +49,7 @@ class HandoffIntent {
   }
 };
 
-class SetSkillEnd {
+export class SetSkillEnd {
   constructor() {}
 
   toLambda(output, indent, options) {
@@ -57,7 +57,7 @@ class SetSkillEnd {
   }
 };
 
-class SetSkillListen {
+export class SetSkillListen {
   constructor(kinds) {
     this.kinds = kinds;
   }
@@ -70,7 +70,7 @@ class SetSkillListen {
   }
 };
 
-class LogMessage {
+export class LogMessage {
   constructor(contents) {
     this.contents = contents;
   }
@@ -80,7 +80,7 @@ class LogMessage {
   }
 };
 
-class State {
+export class State {
   constructor(name) {
     this.name = name;
     this.intents = {};
@@ -495,18 +495,4 @@ scope has ${options.scopeManager.depth()} depth`
       return result;
     })();
   }
-};
-
-const lib = {
-  Transition,
-  HandoffIntent,
-  SetSkillEnd,
-  SetSkillListen,
-  LogMessage,
-  State
-};
-
-module.exports = {
-  lib,
-  ...lib
 };

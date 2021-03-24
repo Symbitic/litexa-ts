@@ -5,27 +5,27 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-function replaceNewlineCharacters(str, replacementCharacter) {
+export function replaceNewlineCharacters(str, replacementCharacter) {
   return str ? str.replace(/\n/g, replacementCharacter) : '';
 }
 
-const isEmptyContentString = str => str.trim().length === 0;
+export const isEmptyContentString = str => str.trim().length === 0;
 
-const isFirstOrLastItemOfArray = (idx, arr) => (0 === idx) || ((arr.length - 1) === idx);
+export const isFirstOrLastItemOfArray = (idx, arr) => (0 === idx) || ((arr.length - 1) === idx);
 
-const cleanLeadingSpaces = str => str.replace(/\n[ \t]+/g, '\n');
+export const cleanLeadingSpaces = str => str.replace(/\n[ \t]+/g, '\n');
 
-const cleanTrailingSpaces = str => str.replace(/[ \t]+\n/g, '\n');
+export const cleanTrailingSpaces = str => str.replace(/[ \t]+\n/g, '\n');
 
-const dedupeNonNewlineConsecutiveWhitespaces = str => str.replace(/[ \t][ \t]+/g, ' ');
+export const dedupeNonNewlineConsecutiveWhitespaces = str => str.replace(/[ \t][ \t]+/g, ' ');
 
 // Method that stringifies a function and normalizes the indentation.
-function stringifyFunction(func, indent) {
+export function stringifyFunction(func, indent) {
   const funcString = func.toString();
   return normalizeIndentForStringifiedFunction(funcString, indent || '');
 }
 
-function normalizeIndentForStringifiedFunction(funcString, indent) {
+export function normalizeIndentForStringifiedFunction(funcString, indent) {
   // First, let's check our stringified function's indent.
   const indentMatch = funcString.match(/\n[ ]*/);
   if (indentMatch) {
@@ -40,19 +40,3 @@ function normalizeIndentForStringifiedFunction(funcString, indent) {
     return funcString;
   }
 }
-
-const lib = {
-  replaceNewlineCharacters,
-  isEmptyContentString,
-  isFirstOrLastItemOfArray,
-  cleanLeadingSpaces,
-  cleanTrailingSpaces,
-  dedupeNonNewlineConsecutiveWhitespaces,
-  stringifyFunction,
-  normalizeIndentForStringifiedFunction
-}
-
-module.exports = {
-  lib,
-  ...lib
-};

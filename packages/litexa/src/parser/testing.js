@@ -5,20 +5,32 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const lib = {};
-const uuid = require('uuid');
-const fs = require('fs');
-const path = require('path');
+import { v4 as uuid } from 'uuid';
+import fs from 'fs';
+import path from 'path';
+import { JSONValidator } from './jsonValidator';
 
-const directiveValidators = {};
+const directiveValidators = {
+  'AudioPlayer.Play': () => [],
+  'AudioPlayer.Stop': () => [],
+  'Hint': () => []
+};
 
-const { JSONValidator } = require('./jsonValidator').lib;
+function __guard__(value, transform) {
+  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+}
 
-directiveValidators['AudioPlayer.Play'] = () => [];
-directiveValidators['AudioPlayer.Stop'] = () => [];
-directiveValidators['Hint'] = () => [];
+function __range__(left, right, inclusive) {
+  let range = [];
+  let ascending = left < right;
+  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
+  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
+    range.push(i);
+  }
+  return range;
+}
 
-const validateSSML = function(skill, line) {
+function validateSSML(skill, line) {
   const errors = [];
   let audioCount = 0;
   const audioFinder = /\<\s*audio/gi;
@@ -99,7 +111,6 @@ class TrapLog {
   }
 }
 
-
 const makeBaseRequest = function(skill) {
   // all requests start out looking like this
   const req = {
@@ -168,7 +179,7 @@ const makeHandlerIdentity = function(skill) {
   return identity;
 };
 
-const makeRequestId = () => `litexaRequestId.${uuid.v4()}`;
+const makeRequestId = () => `litexaRequestId.${uuid()}`;
 
 const makeLaunchRequest = function(skill, time, locale) {
   // launch requests are uniform, they just have this tacked onto the base
@@ -512,10 +523,10 @@ ${comparatorNames[this.op]} \`${tail}\``
 
 
 class ExpectedEndSession {
-  static initClass() {
-
-    this.prototype.isExpectedEndSession = true;
+  get isExpectedEndSession() {
+    return true;
   }
+
   // expect the response to indicate the session should end
   constructor(location) {
     this.location = location;
@@ -527,13 +538,12 @@ class ExpectedEndSession {
     }
   }
 }
-ExpectedEndSession.initClass();
 
 class ExpectedContinueSession {
-  static initClass() {
-
-    this.prototype.isExpectedContinueSession = true;
+  get isExpectedContinueSession() {
+    return true;
   }
+
   constructor(location, kinds) {
     this.location = location;
     this.kinds = kinds;
@@ -551,13 +561,12 @@ class ExpectedContinueSession {
     }
   }
 }
-ExpectedContinueSession.initClass();
 
 class ExpectedDirective {
-  static initClass() {
-
-    this.prototype.isExpectedDirective = true;
+  get isExpectedDirective() {
+    return true;
   }
+
   // expect the response to indicate the session should end
   constructor(location, name) {
     this.location = location;
@@ -581,14 +590,12 @@ class ExpectedDirective {
     }
   }
 }
-ExpectedDirective.initClass();
-
 
 class ResponseGeneratingStep {
-  static initClass() {
-
-    this.prototype.isResponseGeneratingStep = true;
+  get isResponseGeneratingStep() {
+    return true;
   }
+
   constructor() {
     this.expectations = [];
   }
@@ -711,13 +718,12 @@ class ResponseGeneratingStep {
     }
   }
 }
-ResponseGeneratingStep.initClass();
 
 class RequestStep extends ResponseGeneratingStep {
-  static initClass() {
-
-    this.prototype.isVoiceStep = true;
+  get isVoiceStep() {
+    return true;
   }
+
   constructor(location, name, source) {
     super();
     this.location = location;
@@ -735,13 +741,12 @@ class RequestStep extends ResponseGeneratingStep {
     return this.processEvent({ result, skill, lambda, context, resultCallback });
   }
 }
-RequestStep.initClass();
 
 class LaunchStep extends ResponseGeneratingStep {
-  static initClass() {
-
-    this.prototype.isVoiceStep = true;
+  get isVoiceStep() {
+    return true;
   }
+
   constructor(location, say, intent) {
     super();
     this.location = location;
@@ -758,13 +763,12 @@ class LaunchStep extends ResponseGeneratingStep {
     return this.processEvent({ result, skill, lambda, context, resultCallback });
   }
 }
-LaunchStep.initClass();
 
 class VoiceStep extends ResponseGeneratingStep {
-  static initClass() {
-
-    this.prototype.isVoiceStep = true;
+  get isVoiceStep() {
+    return true;
   }
+
   constructor(location, say, intent, values) {
     super();
     let v;
@@ -840,14 +844,11 @@ value for unknown slot ${k}`
     return this.processEvent({ result, skill, lambda, context, resultCallback });
   }
 }
-VoiceStep.initClass();
-
-
 class DBFixupStep {
-  static initClass() {
-
-    this.prototype.isDBFixupStep = true;
+  get isDBFixupStep() {
+    return true;
   }
+
   constructor(reference, code) {
     this.reference = reference;
     this.code = code;
@@ -865,14 +866,12 @@ class DBFixupStep {
     }
   }
 }
-DBFixupStep.initClass();
-
 
 class WaitStep {
-  static initClass() {
-
-    this.prototype.isWaitStep = true;
+  get isWaitStep() {
+    return true;
   }
+
   constructor(duration) {
     this.duration = duration;
   }
@@ -883,13 +882,12 @@ class WaitStep {
     return resultCallback(null, {});
   }
 }
-WaitStep.initClass();
 
 class StopStep {
-  static initClass() {
-
-    this.prototype.isStopStep = true;
+  get isStopStep() {
+    return true;
   }
+
   constructor(reason) {
     this.reason = reason;
     this.requestReason = (() => { switch (this.reason) {
@@ -911,7 +909,6 @@ class StopStep {
     }
   }
 }
-StopStep.initClass();
 
 class SetRegionStep {
   constructor(region) {
@@ -1270,10 +1267,10 @@ class TestContext {
 
 
 class Test {
-  static initClass() {
-
-    this.prototype.isTest = true;
+  get isTest() {
+    return true;
   }
+
   constructor(location, name, sourceFilename) {
     this.location = location;
     this.name = name;
@@ -1653,41 +1650,24 @@ class Test {
     return nextStep();
   }
 }
-Test.initClass();
 
-lib.TestUtils = {
-  makeBaseRequest,
-  makeHandlerIdentity,
-  makeRequestId,
-  padStringWithChars
+export default {
+  TestUtils: {
+    makeBaseRequest,
+    makeHandlerIdentity,
+    makeRequestId,
+    padStringWithChars
+  },
+  ExpectedExactSay,
+  ExpectedRegexSay,
+  ExpectedSay,
+  ExpectedState,
+  ExpectedDB,
+  ExpectedEndSession,
+  ExpectedContinueSession,
+  ExpectedDirective,
+  ResponseGeneratingStep,
+  CodeTest,
+  TestContext,
+  Test
 };
-
-lib.ExpectedExactSay = ExpectedExactSay;
-lib.ExpectedRegexSay = ExpectedRegexSay;
-lib.ExpectedSay = ExpectedSay;
-lib.ExpectedState = ExpectedState;
-lib.ExpectedDB = ExpectedDB;
-lib.ExpectedEndSession = ExpectedEndSession;
-lib.ExpectedContinueSession = ExpectedContinueSession;
-lib.ExpectedDirective = ExpectedDirective;
-lib.ResponseGeneratingStep = ResponseGeneratingStep;
-lib.CodeTest = CodeTest;
-lib.TestContext = TestContext;
-lib.Test = Test;
-
-module.exports = {
-  lib
-};
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}
-function __range__(left, right, inclusive) {
-  let range = [];
-  let ascending = left < right;
-  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
-  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    range.push(i);
-  }
-  return range;
-}

@@ -5,9 +5,9 @@
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { ParserError } = require('./errors');
+import { ParserError } from './errors';
 
-class Card {
+export class Card {
   constructor(location, title, content, imageAssetName) {
     this.location = location;
     this.title = title;
@@ -72,13 +72,4 @@ class Card {
   hasStatementsOfType(types) {
     return types.indexOf('card') >= 0;
   }
-};
-
-const lib = {
-  Card
-};
-
-module.exports = {
-  lib,
-  ...lib
 };

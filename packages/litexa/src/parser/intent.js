@@ -1,13 +1,13 @@
 /*
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
 
-const { Function, FunctionMap } = require('./function').lib;
-const { ParserError, formatLocationStart } = require('./errors');
-const Utils = require('./utils').lib;
+import { Function, FunctionMap } from './function';
+import { ParserError, formatLocationStart } from './errors';
+import { stringifyFunction } from './utils';
 
 const builtInIntents = [
   'AMAZON.CancelIntent',
@@ -68,7 +68,7 @@ function identifierFromString(location, str) {
   return !ret[0].match(/[A-Za-z]/) ? `i${ret}` : ret;
 };
 
-class Utterance {
+export class Utterance {
   constructor(parts) {
     this.parts = parts;
     this.isUtterance = true;
@@ -233,7 +233,7 @@ creating implicit type for slot \`${slotName}\`. Please remove conflicting defin
   return typeName;
 };
 
-class Slot {
+export class Slot {
   constructor(name) {
     this.name = name;
   }
@@ -310,7 +310,7 @@ anywhere`
   }
 };
 
-class Intent {
+export class Intent {
   static registerUtterance(location, utterance, intentName) {
     // Check if this utterance is already being handled by a different intent.
     if (Intent.allUtterances[utterance]) {
@@ -461,7 +461,7 @@ class Intent {
     for (part of Array.from(utterance.parts)) {
       if (part.isSlot) {
         if (!this.slots[part.name]) {
-          this.slots[part.name] = new lib.Slot(part.name);
+          this.slots[part.name] = new Slot(part.name);
         }
       }
     }
@@ -471,7 +471,7 @@ class Intent {
 
   pushAlternate(parts) {
     this.hasAlternateUtterance = true;
-    return this.pushUtterance(new lib.Utterance(parts));
+    return this.pushUtterance(new Utterance(parts));
   }
 
   pushChildIntent(intent) {
@@ -604,7 +604,7 @@ class Intent {
 Intent.allUtterances = {};
 
 // Class that supports intent filtering.
-class FilteredIntent extends Intent {
+export class FilteredIntent extends Intent {
   constructor(args) {
     super(args);
     this.startFunction = new FunctionMap;
@@ -648,13 +648,13 @@ class FilteredIntent extends Intent {
           const intentFilter = this.intentFilters[intentFilterName];
           if (!intentFilter) { continue; }
           options.scopeManager.pushScope(this.location, `${this.name}:${intentFilterName}`);
-          const filterFuncString = Utils.stringifyFunction(intentFilter.filter, `${indent}  `);
+          const filterFuncString = stringifyFunction(intentFilter.filter, `${indent}  `);
           output.push(`${indent}__intentFilter = ${filterFuncString}`);
           output.push(`${indent}if (__intentFilter(context.event.request, ${JSON.stringify(intentFilter.data)})) {`);
 
           // If the filter specified a callback, run it before proceeding to the intent handler.
           if (intentFilter.callback != null) {
-            const callbackString = Utils.stringifyFunction(intentFilter.callback, `${indent}    `);
+            const callbackString = stringifyFunction(intentFilter.callback, `${indent}    `);
             output.push(`${indent}  await (${callbackString})();`);
           }
 
@@ -667,15 +667,4 @@ class FilteredIntent extends Intent {
       })();
     }
   }
-};
-
-const lib = {
-  Utterance,
-  Slot,
-  Intent,
-  FilteredIntent,
-};
-
-module.exports = {
-  lib
 };
